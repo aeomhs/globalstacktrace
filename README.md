@@ -1,0 +1,2 @@
+# globalstacktrace
+Global Stack Trace, 
