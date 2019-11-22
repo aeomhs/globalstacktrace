@@ -17,5 +17,6 @@ from django.contrib import admin
 from django.urls import path
 
 urlpatterns = [
+    # TODO web 애플리케이션 추가하기
     path('admin/', admin.site.urls),
 ]
