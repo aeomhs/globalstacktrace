@@ -141,5 +141,6 @@ STATIC_URL = '/static/'
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'web', 'static')
 ]
+
 # 그러면 아래 경로에 자동으로 생김
 STATIC_ROOT = os.path.join(BASE_DIR, 'static')

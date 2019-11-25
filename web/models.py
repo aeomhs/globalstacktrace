@@ -6,8 +6,6 @@ from django.contrib.auth.models import (
 
 # TODO Create Models
 
-## Entity
-# Super User
 class MyUserManager(BaseUserManager):
     def create_user(self, name, email, date_of_birth, password=None):
         """
@@ -44,7 +42,9 @@ class MyUserManager(BaseUserManager):
         user.save(using=self._db)
         return user
 
+## Entity
 # User
+
 class MyUser(AbstractBaseUser):
     name = models.CharField(max_length = 30)
     email = models.EmailField(
@@ -66,7 +66,7 @@ class MyUser(AbstractBaseUser):
     ## https://stackoverflow.com/questions/3429878/automatic-creation-date-for-django-model-form-objects
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
-    
+
     def __str__(self):
         return self.email
 
@@ -86,21 +86,55 @@ class MyUser(AbstractBaseUser):
         # Simplest possible answer: All admins are staff
         return self.is_admin
 
-
 # Card
-# class Card(models.Model):
+class Card(models.Model):
+    # User_Card
+    # One to One
+    user = models.OneToOneField(
+        MyUser, 
+        on_delete=models.CASCADE, 
+        primary_key = True,
+    ) 
     
+    homepage = models.URLField()
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
 
 # Project
 #  Certification
-#   Certification_Type
-# class Project(models.Model):
+class Project(models.Model):
+    summary = models.TextField()
+    link = models.URLField()
 
+class Certification(models.Model):
+    # CHOICES
+    license_type = 'LCS'
+    award_type = 'AWD'
+    certificate_type = 'CTF'
+    CERTIFICATION_TYPE_CHOICES = (
+        (license_type, '자격증'),
+        (award_type, '수상 내역'),
+        (certificate_type, '수료증'),
+    )
+
+    date = models.DateTimeField()
+    name = models.CharField('name', max_length=20)
+    cerification_type = models.CharField('type', max_length=3, choices=CERTIFICATION_TYPE_CHOICES)
+    organization = models.CharField(max_length=20)
 
 ## Relationship
-# User_Card
 # Card_Project
+class Card_Project(models.Model):
+    card_id = models.ForeignKey(Card, on_delete=models.CASCADE)
+    project_id = models.ForeignKey(Project, on_delete=models.CASCADE)
+
 # Card_Certification
+class Card_Certification(models.Model):
+    card_id = models.ForeignKey(Card, on_delete=models.CASCADE)
+    certification_id = models.ForeignKey(Certification, on_delete=models.CASCADE)
 
 ## Entity from Relatonship
 # Like
+class Like(models.Model):
+    user_id = models.ForeignKey(MyUser, on_delete=models.CASCADE)
+    card_id = models.ForeignKey(Card, on_delete=models.CASCADE)
