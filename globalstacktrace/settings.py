@@ -10,17 +10,31 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/2.2/ref/settings/
 """
 
-import os
+# json : open secret key using json file
+import os, json
+from django.core.exceptions import ImproperlyConfigured
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 
-# Quick-start development settings - unsuitable for production
-# See https://docs.djangoproject.com/en/2.2/howto/deployment/checklist/
+# detach Secret key https://wayhome25.github.io/django/2017/07/11/django-settings-secret-key/
+# Generate from https://www.miniwebtool.com/django-secret-key-generator/
+# Ref. secrets.json
+secret_file = os.path.join(BASE_DIR, '../secrets.json')
+with open(secret_file) as file:
+    secrets = json.loads(file.read())
 
-# SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'm!p-g86wnu(8zoj1lvo526@=w1y^i+ncx#j+k*g3zj2oo8fcd-'
+def get_secret(setting, secrets=secrets):
+    """비밀 변수를 가져오거나 명시적 예외를 반환한다."""
+    try:
+        return secrets[setting]
+    except KeyError:
+        error_msg = "Set the {} environment variable".format(setting)
+        raise ImproperlyConfigured(error_msg)
+
+SECRET_KEY = get_secret("SECRET_KEY")
+
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -31,14 +45,13 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    'web.apps.WebConfig',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'django_extensions',
-    'web.apps.WebConfig',
 ]
 
 MIDDLEWARE = [
@@ -76,6 +89,7 @@ WSGI_APPLICATION = 'globalstacktrace.wsgi.application'
 # https://docs.djangoproject.com/en/2.2/ref/settings/#databases
 
 DATABASES = {
+    # LOCAL 환경
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
@@ -101,6 +115,8 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+AUTH_USER_MODEL = 'web.MyUser'
+
 
 # Internationalization
 # https://docs.djangoproject.com/en/2.2/topics/i18n/
@@ -120,4 +136,11 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/2.2/howto/static-files/
 
 STATIC_URL = '/static/'
+
+# static 파일 추가 후에 `python manage.py collectstatic` 수행 필요.
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, 'web', 'static')
+]
+
+# 그러면 아래 경로에 자동으로 생김
 STATIC_ROOT = os.path.join(BASE_DIR, 'static')
