@@ -92,8 +92,7 @@ class Card(models.Model):
     # One to One
     user = models.OneToOneField(
         MyUser, 
-        on_delete=models.CASCADE, 
-        primary_key = True,
+        on_delete=models.CASCADE,
     ) 
     
     homepage = models.URLField()
