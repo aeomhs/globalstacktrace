@@ -37,8 +37,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'django_extensions',
     'web.apps.WebConfig',
+    'django_extensions',
 ]
 
 MIDDLEWARE = [
@@ -100,6 +100,13 @@ AUTH_PASSWORD_VALIDATORS = [
         'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
     },
 ]
+
+# graph_model
+GRAPH_MODELS = {
+  'all_applications': True,
+  'group_models': True,
+}
+
 
 
 # Internationalization
