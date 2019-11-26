@@ -44,7 +44,6 @@ class MyUserManager(BaseUserManager):
 
 ## Entity
 # User
-
 class MyUser(AbstractBaseUser):
     name = models.CharField(max_length = 30)
     email = models.EmailField(
@@ -90,7 +89,7 @@ class MyUser(AbstractBaseUser):
 class Card(models.Model):
     # User_Card
     # One to One
-    user = models.OneToOneField(
+    owner = models.OneToOneField(
         MyUser, 
         on_delete=models.CASCADE, 
         primary_key = True,
@@ -103,6 +102,11 @@ class Card(models.Model):
 # Project
 #  Certification
 class Project(models.Model):
+    card = models.ForeignKey(
+        Card, 
+        on_delete=models.CASCADE,
+    )
+    name = models.CharField(max_length = 30)
     summary = models.TextField()
     link = models.URLField()
 
@@ -116,25 +120,30 @@ class Certification(models.Model):
         (award_type, '수상 내역'),
         (certificate_type, '수료증'),
     )
+    
+    card = models.ForeignKey(
+        Card, 
+        on_delete=models.CASCADE,
+    )
 
     date = models.DateTimeField()
     name = models.CharField('name', max_length=20)
-    cerification_type = models.CharField('type', max_length=3, choices=CERTIFICATION_TYPE_CHOICES)
+    cerification_type = models.CharField(
+        'type', 
+        max_length=3, 
+        choices=CERTIFICATION_TYPE_CHOICES,
+    )
     organization = models.CharField(max_length=20)
-
-## Relationship
-# Card_Project
-class Card_Project(models.Model):
-    card_id = models.ForeignKey(Card, on_delete=models.CASCADE)
-    project_id = models.ForeignKey(Project, on_delete=models.CASCADE)
-
-# Card_Certification
-class Card_Certification(models.Model):
-    card_id = models.ForeignKey(Card, on_delete=models.CASCADE)
-    certification_id = models.ForeignKey(Certification, on_delete=models.CASCADE)
 
 ## Entity from Relatonship
 # Like
 class Like(models.Model):
-    user_id = models.ForeignKey(MyUser, on_delete=models.CASCADE)
-    card_id = models.ForeignKey(Card, on_delete=models.CASCADE)
+    user = models.ForeignKey(
+        MyUser, 
+        on_delete=models.CASCADE,
+    )
+
+    liked = models.ForeignKey(
+        Card, 
+        on_delete=models.CASCADE,
+    )
