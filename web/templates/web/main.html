@@ -28,39 +28,27 @@
     </header>
     <main role="main" class="container">
         <div class="row">
+            {% for profile in profiles %}
             <div class="col s4 m4">
-                <h2 class="header">Horizontal Card</h2>
                 <div class="card horizontal s4">
                     <div class="card-image">
                         <img src="https://lorempixel.com/100/190/nature/6">
                     </div>
                     <div class="card-stacked">
+                        <div class="row">
+                            <div class="card-title col s4">{{ profile.name }}</div>
+                            <div class="card-content col s4 offset-s4">{{ profile.likeNum }}개</div>
+                        </div>
                         <div class="card-content">
-                            <p>I am a very simple card. I am good at containing small bits of information.</p>
+                            <p>certifications</p>
                         </div>
                         <div class="card-action">
-                            <a href="#">This is a link</a>
+                            <a href="{{ profile.homepage }}">This is a link</a>
                         </div>
                     </div>
                 </div>
             </div>
-
-            <div class="col s4 m4">
-                <h2 class="header">Horizontal Card</h2>
-                <div class="card horizontal s4">
-                    <div class="card-image">
-                        <img src="https://lorempixel.com/100/190/nature/6">
-                    </div>
-                    <div class="card-stacked">
-                        <div class="card-content">
-                            <p>I am a very simple card. I am good at containing small bits of information.</p>
-                        </div>
-                        <div class="card-action">
-                            <a href="#">This is a link</a>
-                        </div>
-                    </div>
-                </div>
-            </div>
+            {% endfor %}
 
         </div>
     </main>
@@ -70,18 +58,3 @@
   <script type="text/javascript" src="{% static 'js/materialize.min.js' %}"></script>
   </body>
 </html>
-
-
-
-      {% for profile in profiles %}
-      <div class="card border-secondary mb-3" style="max-width: 18rem;">
-          <div class="card-header">{{ profile.name }}</div>
-          <div class="card-body text-secondary">
-            <h5 class="card-title">좋아요 {{ profile.likeNum }}개</h5>
-              <p class="card-text"><a href="{{ profile.homepage }}">go to blog</a></p>
-            <div>
-                <p class="card-text">certification</p>
-            </div>
-          </div>
-      </div>
-      {% endfor %}
