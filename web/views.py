@@ -1,9 +1,11 @@
 from django.contrib.auth import authenticate, login, logout
 from django.shortcuts import reverse, redirect
-from .forms import LoginForm
+from .forms import LoginForm, SignupForm
 
 from django.shortcuts import render
 from django.utils import timezone
+
+from .models import MyUser
 
 # Create your views here.
 def index(request):
@@ -12,7 +14,7 @@ def index(request):
         logined = True
     return render(request, 'web/index.html', {'logined':logined} )
 
-# TODO 로그인 페이지 구현
+# 로그인 페이지 구현
 def signin(request):
     if request.method == 'POST':
         form = LoginForm(request.POST)
@@ -33,9 +35,27 @@ def signin(request):
 # Logout
 def user_logout(request):
     logout(request)
-
     return redirect('index')
 
-# TODO 회원가입 페이지 구현
+# 회원가입 페이지 구현
 def signup(request):
-    return render(request, 'web/signup.html')
+    if request.method == 'POST':
+        form = SignupForm(request.POST)
+        
+        if form.is_valid():
+            print("valied")
+            user = MyUser.objects.create_user(
+                form.cleaned_data['name'],
+                form.cleaned_data['email'],
+                form.cleaned_data['date_of_birth'],
+                form.cleaned_data['password'],
+            )
+            user.save()
+            login(request, user)
+            return redirect('index')
+        else:
+            return redirect('signup')
+    else :
+        form = SignupForm()
+
+    return render(request, 'web/signup.html', {'form':form})

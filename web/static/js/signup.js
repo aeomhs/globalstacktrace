@@ -1,4 +1,5 @@
-var options = [
+
+var i18n = [
   cancel = 'Cancel',
   clear = 'clear',
   done = 'OK',
@@ -54,5 +55,9 @@ var options = [
 ]
 document.addEventListener('DOMContentLoaded', function() {
   var elems = document.querySelectorAll('.datepicker');
-  var instances = M.Datepicker.init(elems, options);
+  var instances = M.Datepicker.init(elems, {
+    autoClose : true,
+    format : 'yyyy-mm-dd',
+    i18n : i18n,
+  });
 });

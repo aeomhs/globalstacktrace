@@ -28,37 +28,46 @@
       </div>
       <div class="signup_container">
         <div class="row">
-          <form class="col s12">
+          <form class="col s12" method="post">
+            {% csrf_token %}
             <div class="row">
               <div class="input-field col s12">
-                <input id="email" type="email" class="validate">
+                <!-- <input id="email" type="email" class="validate"> -->
                 <label for="email">이메일</label>
+                {{form.email}}
                 <span class="helper-text" data-error="wrong email format" data-success="o"></span>
               </div>
             </div>
             <div class="row">
               <div class="input-field col s6">
-                <input placeholder="홍길동" id="name" type="text" class="validate">
+                <!-- <input placeholder="홍길동" id="name" type="text" class="validate"> -->
                 <label for="name">이름</label>
+                {{form.name}}
               </div>
               <div class="input-field col s6">
-                <input placeholder="" type="text" class="datepicker">
-
+                <!-- <input placeholder="" type="text" class="datepicker"> -->
                 <label for="dateofbirth">생년월일</label>
+                {{form.date_of_birth}}
               </div>
             </div>
             <div class="row">
               <div class="input-field col s12">
-                <input id="password" type="password" class="validate">
+                <!-- <input id="password" type="password" class="validate"> -->
                 <label for="password">비밀번호</label>
+                {{form.password}}
               </div>
             </div>
             <div class="row">
               <div class="input-field col s12">
-                <input id="password_confirm" type="password" class="validate">
-                <label for="password_confirm">비밀번호 확인</label>
+                <!-- <input id="password_confirm" type="password" class="validate"> -->
+                <label for="confirm_password">비밀번호 확인</label>
+                {{form.confirm_password}}
               </div>
             </div>
+            <div class="btn_container">
+                <!-- <a class="waves-effect waves-light btn-large">Login</a> -->
+                <input type="submit" class="waves-effect waves-light btn-large" name="signup" value="Signup">
+              </div>
           </form>
         </div>
       </div>
