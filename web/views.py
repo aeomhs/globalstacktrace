@@ -6,6 +6,9 @@ from .models import Card
 from .models import Certification
 from .models import Like
 
+from django.core.paginator import Paginator
+
+
 # Create your views here.
 def index(request):
     return render(request, 'web/index.html')
@@ -15,7 +18,7 @@ def signin(request):
     return render(request, 'web/signin.html')
 
 
-# main display
+
 def main(request):
     profile = []
     try:
@@ -28,10 +31,8 @@ def main(request):
             homepage = cards[i].homepage
             certifications = Certification.objects.filter(card=cards[i])[0:2]
             profile.append({'name': name, 'likeNum': likeNum, 'homepage': homepage})
-            ''''certification1': ('None' if certifications[0] is None else certifications[0]), 'certification2': ('None' if certifications[1] is None else certifications[1])'''
             i+=1
 
-        # print(profile[2])
 
         profiles = {'profiles': profile}
 
