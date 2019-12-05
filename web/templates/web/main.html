@@ -27,37 +27,32 @@
       </nav>
     </header>
     <main role="main" class="container">
-      <div class="col s12 m7">
-        <h2 class="header">Horizontal Card</h2>
-        <div class="vertical_container"">
-          <div class="card horizontal">
-            <div class="card-image">
-              <img src="https://lorempixel.com/100/190/nature/6">
+        <div class="row">
+            {% for profile in profiles %}
+            <div class="col s4 m4">
+                <div class="card horizontal s4">
+                    <div class="card-image">
+                        <img src="https://lorempixel.com/100/190/nature/6">
+                    </div>
+                    <div class="card-stacked">
+                        <div class="row">
+                            <div class="card-title col s4">{{ profile.name }}</div>
+                            <div class="card-content col s4 offset-s4">{{ profile.likeNum }}개</div>
+                        </div>
+                        <div class="card-content">
+                            <p>certifications</p>
+                        </div>
+                        <div class="card-action">
+                            <a href="{{ profile.homepage }}">This is a link</a>
+                        </div>
+                    </div>
+                </div>
             </div>
-            <div class="card-stacked">
-              <div class="card-content">
-                <p>I am a very simple card. I am good at containing small bits of information.</p>
-              </div>
-              <div class="card-action">
-                <a href="#">This is a link</a>
-              </div>
-            </div>
-          </div>
-          <div class="card horizontal">
-            <div class="card-image">
-              <img src="https://lorempixel.com/100/190/nature/6">
-            </div>
-            <div class="card-stacked">
-              <div class="card-content">
-                <p>I am a very simple card. I am good at containing small bits of information.</p>
-              </div>
-              <div class="card-action">
-                <a href="#">This is a link</a>
-              </div>
-            </div>
-          </div>
+            {% endfor %}
+            <a class="btn-floating btn-large waves-effect waves-light red col 1 offset-l11"><i class="material-icons">add</i></a>
         </div>
-      </div>
+
+
     </main>
     <footer>
     </footer>
