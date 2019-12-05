@@ -4,8 +4,6 @@ from django.contrib.auth.models import (
     BaseUserManager, AbstractBaseUser
 )
 
-# TODO Create Models
-
 class MyUserManager(BaseUserManager):
     def create_user(self, name, email, date_of_birth, password=None):
         """
