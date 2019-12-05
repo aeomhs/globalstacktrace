@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="ko" dir="ltr">
+  {% load static %}
+  <head>
+    <!--Import Google Icon Font-->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
+    <!--Import materialize.css-->
+    <link type="text/css" rel="stylesheet" href="{% static 'css/materialize.min.css' %}" media="screen, projection">
+
+    <!--Let browser know website is optimized for mobile-->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <meta charset="utf-8">
+    <title>Welcome to Global Stack Trace</title>
+  </head>
+  <body>
+    <header>
+      <nav>
+        <div class="nav-wrapper">
+          <a href="#" class="brand-logo">Global Stack Trace</a>
+          <ul id="nav-mobile" class="right hide-on-med-and-down">
+            <li><a href="#">Nav1</a></li>
+            <li><a href="#">Nav2</a></li>
+            <li><a href="#">Nav3</a></li>
+          </ul>
+        </div>
+      </nav>
+    </header>
+    <main role="main" class="container">
+        <div class="row">
+            {% for profile in profiles %}
+            <div class="col s4 m4">
+                <div class="card horizontal s4">
+                    <div class="card-image">
+                        <img src="https://lorempixel.com/100/190/nature/6">
+                    </div>
+                    <div class="card-stacked">
+                        <div class="row">
+                            <div class="card-title col s4">{{ profile.name }}</div>
+                            <div class="card-content col s4 offset-s4">{{ profile.likeNum }}개</div>
+                        </div>
+                        <div class="card-content">
+                            <p>certifications</p>
+                        </div>
+                        <div class="card-action">
+                            <a href="{{ profile.homepage }}">This is a link</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+            <a class="btn-floating btn-large waves-effect waves-light red col 1 offset-l11"><i class="material-icons">add</i></a>
+        </div>
+
+
+    </main>
+    <footer>
+    </footer>
+  <!--JavaScript at end of body for optimized loading-->
+  <script type="text/javascript" src="{% static 'js/materialize.min.js' %}"></script>
+  </body>
+</html>

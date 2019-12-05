@@ -9,4 +9,6 @@ urlpatterns = [
     path('user_logout/', views.user_logout, name='user_logout'),
     # 회원가입
     path('signup/', views.signup, name='signup'),
+    # 메인 페이지 by 진호
+    path('main/', views.main, name='main'),
 ]

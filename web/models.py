@@ -58,7 +58,7 @@ class MyUser(AbstractBaseUser):
 
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ['name','date_of_birth']
-    
+
     # Created & Updated Time
     ## https://stackoverflow.com/questions/3429878/automatic-creation-date-for-django-model-form-objects
     created_at = models.DateTimeField(auto_now_add=True)
@@ -97,6 +97,10 @@ class Card(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
+
+    def __str__(self):
+        return str(self.owner)
+
 # Project
 #  Certification
 class Project(models.Model):
@@ -107,6 +111,9 @@ class Project(models.Model):
     name = models.CharField(max_length = 30)
     summary = models.TextField()
     link = models.URLField()
+
+    def __str__(self):
+        return str(self.card)+" : "+str(self.name)
 
 class Certification(models.Model):
     # CHOICES
@@ -133,6 +140,10 @@ class Certification(models.Model):
     )
     organization = models.CharField(max_length=20)
 
+
+    def __str__(self):
+        return str(self.card)+" : "+str(self.name)
+
 ## Entity from Relatonship
 # Like
 class Like(models.Model):
@@ -145,3 +156,6 @@ class Like(models.Model):
         Card, 
         on_delete=models.CASCADE,
     )
+
+    def __str__(self):
+        return str(self.user)+" likes "+str(self.liked)

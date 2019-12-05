@@ -7,6 +7,11 @@ from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 from django.contrib.auth.forms import ReadOnlyPasswordHashField
 
 from .models import MyUser
+from .models import Card
+from .models import Project
+from .models import Certification
+from .models import Like
+
 
 
 class UserCreationForm(forms.ModelForm):
@@ -87,3 +92,9 @@ admin.site.register(MyUser, UserAdmin)
 # ... and, since we're not using Django's built-in permissions,
 # unregister the Group model from admin.
 admin.site.unregister(Group)
+
+
+admin.site.register(Card)
+admin.site.register(Project)
+admin.site.register(Certification)
+admin.site.register(Like)
