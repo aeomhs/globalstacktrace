@@ -4,6 +4,7 @@ from django.contrib.auth.models import (
     BaseUserManager, AbstractBaseUser
 )
 
+
 class MyUserManager(BaseUserManager):
     def create_user(self, name, email, date_of_birth, password=None):
         """
@@ -40,7 +41,7 @@ class MyUserManager(BaseUserManager):
         user.save(using=self._db)
         return user
 
-## Entity
+
 # User
 class MyUser(AbstractBaseUser):
     name = models.CharField(max_length = 30)
@@ -60,7 +61,7 @@ class MyUser(AbstractBaseUser):
     REQUIRED_FIELDS = ['name','date_of_birth']
 
     # Created & Updated Time
-    ## https://stackoverflow.com/questions/3429878/automatic-creation-date-for-django-model-form-objects
+    # https://stackoverflow.com/questions/3429878/automatic-creation-date-for-django-model-form-objects
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -83,6 +84,7 @@ class MyUser(AbstractBaseUser):
         # Simplest possible answer: All admins are staff
         return self.is_admin
 
+
 # Card
 class Card(models.Model):
     # User_Card
@@ -97,12 +99,11 @@ class Card(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
-
     def __str__(self):
         return str(self.owner)
 
+
 # Project
-#  Certification
 class Project(models.Model):
     card = models.ForeignKey(
         Card, 
@@ -115,6 +116,8 @@ class Project(models.Model):
     def __str__(self):
         return str(self.card)+" : "+str(self.name)
 
+
+#  Certification
 class Certification(models.Model):
     # CHOICES
     license_type = 'LCS'
@@ -140,11 +143,10 @@ class Certification(models.Model):
     )
     organization = models.CharField(max_length=20)
 
-
     def __str__(self):
         return str(self.card)+" : "+str(self.name)
 
-## Entity from Relatonship
+
 # Like
 class Like(models.Model):
     user = models.ForeignKey(
