@@ -30,19 +30,36 @@
         </div>
       </nav>
     </header>
+
+    <div class="divider"></div>
+
     <main role="main" class="container">
         <div class="row">
+            <div class="input-field col s2 offset-s10">
+                <select multiple id="select_lang" name='select_lang'>
+                    <option value="" disabled>Choose language</option>
+                    <option value="C">C</option>
+                    <option value="Java">Java</option>
+                    <option value="Python">Python</option>
+                    <option value="Confirm">확인</option>
+                </select>
+                <label>Selected language</label>
+            </div>
+
+        </div>
+
+        <div class="row infinite-container">
+
             {% for profile in profiles %}
-            <div class="col s4 m4">
+            <div class="col s4 m4 infinite-item">
                 <div class="card horizontal s4">
-                    <div class="card-image">
-                        <!-- <img src="https://lorempixel.com/100/190/nature/6"> -->
-                    </div>
                     <div class="card-stacked">
                         <div class="row">
-                            <div class="card-title col s4">{{ profile.name }}</div>
-                            <div class="card-content col s4 offset-s4">{{ profile.likeNum }}개</div>
+                            <div class="card-title col s4">{{ profile.name }}<br>{{ profile.email }}</div>
+
+                            <div id="{{ profile.email }}" class="card-content col s4 offset-s4">{{ profile.likeNum }}개</div>
                         </div>
+                        <a class="like" name="{{ profile.email }}"><i id='like_icon_{{ profile.email }}' class="material-icons">favorite</i></a>
                         <div class="card-content">
                             <p>certifications</p>
                         </div>
@@ -51,8 +68,18 @@
                         </div>
                     </div>
                 </div>
+
             </div>
             {% endfor %}
+        </div>
+        {% if profiles.has_next %}
+            <a class="infinite-more-link" href="?page={{ profiles.next_page_number }}">More</a>
+        {% endif %}
+
+        <div class="loading" style="display: none;">
+            Loading...
+        </div>
+        <div class="row">
             {% if logined %}
             <a class="btn-floating btn-large waves-effect waves-light red col 1 offset-l11 modal-trigger" href="#stack">
               {% if has_a_card %}
@@ -194,11 +221,101 @@
             </div>
             {% endif %}
         </div>
-    </main>
-    <footer>
-    </footer>
+  </main>
+  <footer>
+  </footer>
   <!--JavaScript at end of body for optimized loading-->
   <script type="text/javascript" src="{% static 'js/materialize.min.js' %}"></script>
   <script type="text/javascript" src="{% static 'js/main_stack.js' %}"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+  <script type="text/javascript" src="{% static 'js/jquery.waypoints.min.js' %}"></script>
+  <script type="text/javascript" src="{% static 'js/infinite.min.js' %}"></script>
+  <script>
+        var infinite = new Waypoint.Infinite({
+            element: $('.infinite-container')[0],
+
+            onBeforePageLoad: function () {
+                $('.loading').show();
+                console.log('loading show')
+            },
+            onAfterPageLoad: function ($items) {
+                $('.loading').hide();
+                console.log('loading hide');
+                $('.like').off();
+                $('.like').click(function(){
+                    var card = $(this).attr('name')
+                    $.ajax({
+                        type: "POST",
+                        url: "{% url 'like' %}",
+                        data: {'card': card, 'csrfmiddlewaretoken': '{{ csrf_token }}'},
+                        dataType: "json",
+
+                        success: function(response){
+                            var like_icon = 'like_icon_'+response.email;
+                            var elmt = document.getElementById(response.email)
+                            document.getElementById(response.email).innerHTML = response.likes_count+'개';
+                            if(response.message == 'like_increase'){
+                                document.getElementById(like_icon).innerText = 'favorite';
+                            }else if(response.message == 'like_decrease'){
+                                document.getElementById(like_icon).innerText = 'favorite_border';
+                            }
+                        },
+                        error:function(request,status,error){
+                            alert("code:"+request.status+"\n"+"message:"+request.responseText+"\n"+"error:"+error);
+                        }
+                    });
+                })
+
+            }
+        });
+    </script>
+
+
+    <script type="text/javascript">
+        //좋아요 버튼 스크립트
+        $('.like').click(function(){
+            var card = $(this).attr('name')
+            $.ajax({
+                type: "POST",
+                url: "{% url 'like' %}",
+                data: {'card': card, 'csrfmiddlewaretoken': '{{ csrf_token }}'},
+                dataType: "json",
+
+                success: function(response){
+                    var like_icon = 'like_icon_'+response.email;
+                    var elmt = document.getElementById(response.email)
+                    document.getElementById(response.email).innerHTML = response.likes_count+'개';
+                    if(response.message == 'like_increase'){
+                        document.getElementById(like_icon).innerText = 'favorite';
+                    }else if(response.message == 'like_decrease'){
+                        document.getElementById(like_icon).innerText = 'favorite_border';
+                    }
+                },
+                error:function(request,status,error){
+                    alert("code:"+request.status+"\n"+"message:"+request.responseText+"\n"+"error:"+error);
+                }
+            });
+        })
+    </script>
+    <script>
+        //언어 select 스크립트
+
+        $(document).ready(function(){
+            $('select').formSelect()
+
+            $('select').change(function(){
+                var selected_lang =  $(this).val();
+                console.log(selected_lang.length)
+
+                if(selected_lang['Confirm'] == true){
+                    console.log('ss')
+                }
+
+                //window.location.href = "location.href='/article//'";
+
+            })
+
+        });
+    </script>
   </body>
 </html>

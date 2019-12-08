@@ -1,10 +1,14 @@
 from django.contrib.auth import authenticate, login, logout
+
 from django.shortcuts import redirect
 from .forms import LoginForm, SignupForm, CardForm, ProjectForm, CertificationForm
 from django.forms import modelformset_factory
 
 from django.shortcuts import render
 from django.utils import timezone
+
+import json
+from django.http import HttpResponse
 
 from .models import MyUser
 
@@ -14,7 +18,7 @@ from .models import Card
 from .models import Project, Certification
 from .models import Like
 
-from django.core.paginator import Paginator
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
 
 # Create your views here.
@@ -76,6 +80,7 @@ def signup(request):
     return render(request, 'web/signup.html', {'form': form})
 
 
+
 def main(request):
     logined = False
     has_a_card = False
@@ -92,18 +97,37 @@ def main(request):
 
     profile = []
     try:
-        cards = Card.objects.order_by('-created_at')[:6]
-        i = 0
-        while i < len(cards):
-            users = MyUser.objects.get(email=cards[i])
-            name = users.name
-            likeNum = len(Like.objects.filter(liked=cards[i]))
-            homepage = cards[i].homepage
-            certifications = Certification.objects.filter(card=cards[i])[0:2]
-            profile.append({'name': name, 'likeNum': likeNum, 'homepage': homepage})
-            i+=1
+        selected_lang = request.POST.get('selected_lang', None)
+        search_summary = request.POST.get('search_summary', None)
 
-        arguments = {'profiles': profile, 'logined': logined, 'has_a_card': has_a_card}
+        print(selected_lang,'-----------')
+        print(search_summary,'------')
+
+        card_list = Card.objects.order_by('-created_at')
+
+        # 이건 해당 언어가 있는글만 출력해야댐
+        # if selected_lang is not None:
+        #     card_list = card_list.filter(summary__contains=)
+
+        if search_summary is not None:
+            card_list = card_list.filter(summary__contains=search_summary)
+
+        for card in card_list:
+            users = MyUser.objects.get(email=card)
+            name = users.name
+            email = users.email
+            likeNum = len(Like.objects.filter(liked=card))
+            homepage = card.homepage
+            certifications = Certification.objects.filter(card=card)[0:2]
+            profile.append({'name': name, 'email': email, 'likeNum': likeNum, 'homepage': homepage})
+            ''''certification1': ('None' if certifications[0] is None else certifications[0]), 'certification2': ('None' if certifications[1] is None else certifications[1])'''
+
+        page = request.GET.get('page', 1)
+        paginator = Paginator(profile, 6)
+
+        profiles = paginator.page(page)
+
+        arguments = {'profiles': profiles, 'logined': logined, 'has_a_card': has_a_card}
 
         # FAB : Stack PUSH & POP (# Stack Edit Modal)
         ProjectFormSet = modelformset_factory(
@@ -168,9 +192,39 @@ def main(request):
             stack_form = {'card_form': card_form, 'project_formset': project_formset,
                           'certification_formset': certification_formset}
 
-            arguments = {'profiles': profile, 'logined': logined, 'has_a_card': has_a_card, 'form': stack_form}
+            arguments = {'profiles': profiles, 'logined': logined, 'has_a_card': has_a_card, 'form': stack_form}
 
     except Card.DoesNotExist:
         raise Http404("Card does not exist.")
-
+    except PageNotAnInteger:
+        profiles = paginator.page(1)
+    except EmptyPage:
+        profiles = paginator.page(paginator.num_pages)
+        
     return render(request, 'web/main.html', arguments)
+
+
+def like(request):
+    if not request.user.is_authenticated:
+        return redirect('signin')
+
+    req_user = request.user
+    req_email = request.POST.get('card', None)
+
+    card_user = MyUser.objects.get(email=req_email)
+    card = Card.objects.get(owner=card_user)
+    likes = Like.objects.filter(user=req_user, liked=card)#.filter(likes=req_card)
+
+    if likes.count() > 0:
+        Like.objects.get(user=req_user, liked=card).delete()
+        likes_count = Like.objects.filter(liked=card).count()
+        print('like decrease, current like:', likes_count)
+        context = {'email': req_email, 'likes_count': likes_count, 'message': 'like_decrease'}
+        return HttpResponse(json.dumps(context), content_type='application/json')
+    else:
+        create_like = Like.objects.create(user=req_user, liked=card)
+        create_like.save()
+        likes_count = Like.objects.filter(liked=card).count()
+        print('like increase, current like:', likes_count)
+        context = {'email': req_email, 'likes_count': likes_count, 'message': 'like_increase'}
+        return HttpResponse(json.dumps(context), content_type='application/json')

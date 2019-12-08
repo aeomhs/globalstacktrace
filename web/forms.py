@@ -33,7 +33,7 @@ class SignupForm(forms.Form):
                 "password and confirm_password does not match"
             )
 
-
+            
 class CardForm(forms.ModelForm):
     # SKILL CHOICES
     pl_c = 'C'
