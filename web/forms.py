@@ -1,6 +1,8 @@
 from django import forms
 from .models import MyUser
 from .models import Like
+from .models import Card
+from .models import Skill
 
 
 class LoginForm(forms.Form):
@@ -33,9 +35,4 @@ class SignupForm(forms.Form):
             raise forms.ValidationError(
                 "password and confirm_password does not match"
             )
-
-
-
-class SearchForm(forms.Form):
-    word = forms.CharField(label='Search Word')
 

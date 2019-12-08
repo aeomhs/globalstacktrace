@@ -1,6 +1,6 @@
 from django.contrib.auth import authenticate, login, logout
 from django.shortcuts import reverse, redirect
-from .forms import LoginForm, SignupForm, SearchForm
+from .forms import LoginForm, SignupForm#, SearchForm
 
 from django.shortcuts import render
 from django.utils import timezone
@@ -76,7 +76,20 @@ def signup(request):
 def main(request):
     profile = []
     try:
+        selected_lang = request.POST.get('selected_lang', None)
+        search_summary = request.POST.get('search_summary', None)
+
+        print(selected_lang,'-----------')
+        print(search_summary,'------')
+
         card_list = Card.objects.order_by('-created_at')
+
+        # 이건 해당 언어가 있는글만 출력해야댐
+        # if selected_lang is not None:
+        #     card_list = card_list.filter(summary__contains=)
+
+        if search_summary is not None:
+            card_list = card_list.filter(summary__contains=search_summary)
 
         for card in card_list:
             users = MyUser.objects.get(email=card)
@@ -91,17 +104,16 @@ def main(request):
         page = request.GET.get('page', 1)
         paginator = Paginator(profile, 6)
 
-
-        try:
-            profiles = paginator.page(page)
-        except PageNotAnInteger:
-            profiles = paginator.page(1)
-        except EmptyPage:
-            profiles = paginator.page(paginator.num_pages)
+        profiles = paginator.page(page)
 
 
     except Card.DoesNotExist:
         raise Http404("Card does not exist.")
+    except PageNotAnInteger:
+        profiles = paginator.page(1)
+    except EmptyPage:
+        profiles = paginator.page(paginator.num_pages)
+
 
     return render(request, 'web/main.html', {'profiles': profiles})
 
@@ -132,10 +144,3 @@ def like(request):
         context = {'email': req_email, 'likes_count': likes_count, 'message': 'like_increase'}
         return HttpResponse(json.dumps(context), content_type='application/json')
 
-
-def search_post(requset):
-
-    form = SearchForm
-
-
-    return 0

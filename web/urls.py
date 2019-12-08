@@ -12,5 +12,5 @@ urlpatterns = [
     # 메인 페이지 by 진호
     path('main/', views.main, name='main'),
     path('like/', views.like, name='like'),
-    path('search/', views.search_post, name='search_post')
+    # path('search/<str:saerch>', views.search_post, name='search_post')
 ]
