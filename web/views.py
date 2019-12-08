@@ -14,9 +14,9 @@ from django.http import Http404
 from .models import MyUser
 from .models import Card
 from .models import Certification
-from .models import Like, LikeManager
+from .models import Like
 
-from django.core.paginator import Paginator
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
 
 # Create your views here.
@@ -72,37 +72,34 @@ def signup(request):
 
     return render(request, 'web/signup.html', {'form':form})
 
-# # main display
 # def main(request):
 #     profile = []
 #     try:
 #         cards = Card.objects.order_by('-created_at')[:6]
-#         i = 0
-#         while i < len(cards):
-#             users = MyUser.objects.get(email=cards[i])
+#
+#         for card in cards:
+#             users = MyUser.objects.get(email=card)
 #             name = users.name
-#             likeNum = len(Like.objects.filter(liked=cards[i]))
-#             homepage = cards[i].homepage
-#             certifications = Certification.objects.filter(card=cards[i])[0:2]
-#             profile.append({'name': name, 'likeNum': likeNum, 'homepage': homepage})
-#             i+=1
+#             email = users.email
+#             likeNum = len(Like.objects.filter(liked=card))
+#             homepage = card.homepage
+#             certifications = Certification.objects.filter(card=card)[0:2]
+#             profile.append({'name': name, 'email': email, 'likeNum': likeNum, 'homepage': homepage})
+#             ''''certification1': ('None' if certifications[0] is None else certifications[0]), 'certification2': ('None' if certifications[1] is None else certifications[1])'''
 #
-#         # print(profile[2])
-#
-#         profiles = {'profiles': profile}
 #
 #     except Card.DoesNotExist:
 #         raise Http404("Card does not exist.")
 #
-#     return render(request, 'web/main.html', profiles)
+#     return render(request, 'web/main.html', {'profiles': profile})
 
 
 def main(request):
     profile = []
     try:
-        cards = Card.objects.order_by('-created_at')[:6]
+        card_list = Card.objects.order_by('-created_at')
 
-        for card in cards:
+        for card in card_list:
             users = MyUser.objects.get(email=card)
             name = users.name
             email = users.email
@@ -112,13 +109,22 @@ def main(request):
             profile.append({'name': name, 'email': email, 'likeNum': likeNum, 'homepage': homepage})
             ''''certification1': ('None' if certifications[0] is None else certifications[0]), 'certification2': ('None' if certifications[1] is None else certifications[1])'''
 
+        page = request.GET.get('page', 1)
+        paginator = Paginator(profile, 6)
 
-        profiles = {'profiles': profile}
+
+        try:
+            profiles = paginator.page(page)
+        except PageNotAnInteger:
+            profiles = paginator.page(1)
+        except EmptyPage:
+            profiles = paginator.page(paginator.num_pages)
+
 
     except Card.DoesNotExist:
         raise Http404("Card does not exist.")
 
-    return render(request, 'web/main.html', profiles)
+    return render(request, 'web/main.html', {'profiles': profiles})
 
 
 def like(request):

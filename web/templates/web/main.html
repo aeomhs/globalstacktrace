@@ -27,9 +27,9 @@
       </nav>
     </header>
     <main role="main" class="container">
-        <div class="row">
+        <div class="row infinite-container">
             {% for profile in profiles %}
-            <div class="col s4 m4">
+            <div class="col s4 m4 infinite-item">
                 <div class="card horizontal s4">
                     <div class="card-image">
                         <!--<img src="https://lorempixel.com/100/190/nature/6">-->
@@ -37,10 +37,7 @@
                     <div class="card-stacked">
                         <div class="row">
                             <div class="card-title col s4">{{ profile.name }}<br>{{ profile.email }}</div>
-                            <form class="col s12" method="post">
-                                {% csrf_token %}
-                                <!--<input type="button" class="like" name="{{ profile.email }}" value="Like">-->
-                            </form>
+
                             <div id="{{ profile.email }}" class="card-content col s4 offset-s4">{{ profile.likeNum }}개</div>
                         </div>
                         <a class="like" name="{{ profile.email }}"><i id='like_icon_{{ profile.email }}', class="material-icons">favorite</i></a>
@@ -52,11 +49,20 @@
                         </div>
                     </div>
                 </div>
+
             </div>
             {% endfor %}
-            <a class="btn-floating btn-large waves-effect waves-light red col 1 offset-l11"><i class="material-icons">add</i></a>
+
+            <!--<a class="btn-floating btn-large waves-effect waves-light red col 1 offset-l11"><i class="material-icons">add</i></a>-->
         </div>
 
+        {% if profiles.has_next %}
+            <a class="infinite-more-link" href="?page={{ profiles.next_page_number }}">More</a>
+        {% endif %}
+
+        <div class="loading" style="display: none;">
+            Loading...
+        </div>
 
     </main>
     <footer>
@@ -64,6 +70,26 @@
     <!--JavaScript at end of body for optimized loading-->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
     <script type="text/javascript" src="{% static 'js/materialize.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'js/jquery.waypoints.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'js/infinite.min.js' %}"></script>
+
+
+    <script>
+        var infinite = new Waypoint.Infinite({
+            element: $('.infinite-container')[0],
+
+            onBeforePageLoad: function () {
+                $('.loading').show();
+                console.log('loading show')
+            },
+            onAfterPageLoad: function ($items) {
+                $('.loading').hide();
+                console.log('loading hide')
+
+            }
+        });
+    </script>
+
     <script type="text/javascript">
         $('.like').click(function(){
             var card = $(this).attr('name')
@@ -75,18 +101,12 @@
 
                 success: function(response){
                     var like_icon = 'like_icon_'+response.email;
-{#                    console.log(like_icon)#}
                     var elmt = document.getElementById(response.email)
                     document.getElementById(response.email).innerHTML = response.likes_count+'개';
                     if(response.message == 'like_increase'){
-
                         document.getElementById(like_icon).innerText = 'favorite';
-{#                        elmt.parentElement.parentElement.children[1].children[0].innerText = "favorite"#}
-{#                        console.log("increase" + elmt.parentElement.parentElement.children[1].children[0]);#}
                     }else if(response.message == 'like_decrease'){
                         document.getElementById(like_icon).innerText = 'favorite_border';
-{#                        elmt.parentElement.parentElement.children[1].children[0].innerText = "favorite_border"#}
-{#                        console.log("increase" + elmt.parentElement.parentElement.children[1].children[0]);#}
                     }
                 },
                 error:function(request,status,error){
