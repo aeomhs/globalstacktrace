@@ -19,9 +19,13 @@
         <div class="nav-wrapper">
           <a href="#" class="brand-logo">Global Stack Trace</a>
           <ul id="nav-mobile" class="right hide-on-med-and-down">
-            <li><a href="#">Nav1</a></li>
-            <li><a href="#">Nav2</a></li>
-            <li><a href="#">Nav3</a></li>
+            {% if logined %}
+            <li><span>{{ user.name }}</span></li>
+            <li><a href="/user_logout/">logout</a></li>
+            {% else %}
+            <li><a href="/signin/">sign in</a></li>
+            <li><a href="/signup/">sign up</a></li>
+            {% endif %}
           </ul>
         </div>
       </nav>
@@ -32,7 +36,7 @@
             <div class="col s4 m4">
                 <div class="card horizontal s4">
                     <div class="card-image">
-                        <img src="https://lorempixel.com/100/190/nature/6">
+                        <!-- <img src="https://lorempixel.com/100/190/nature/6"> -->
                     </div>
                     <div class="card-stacked">
                         <div class="row">
@@ -49,7 +53,137 @@
                 </div>
             </div>
             {% endfor %}
-            <a class="btn-floating btn-large waves-effect waves-light red col 1 offset-l11"><i class="material-icons">add</i></a>
+            {% if logined %}
+            <a class="btn-floating btn-large waves-effect waves-light red col 1 offset-l11 modal-trigger" href="#stack">
+              {% if has_a_card %}
+              <i class="material-icons">mode_edit</i>
+              {% else %}
+              <i class="material-icons">add</i>
+              {% endif %}
+            </a>
+            <!-- Modal Structure -->
+            <div id="stack" class="modal modal-fixed-footer">
+              <div class="modal-content">
+                <div class="row">
+                  <form class="col s12" method="post">
+                    {% csrf_token %}
+                    <!-- Card Info -->
+                    <div class="row">
+                      <div class="input-field col s12">
+                        <label for="homepage">homepage</label>
+                        {{ form.card_form.homepage }}
+                      </div>
+                    </div>
+                    <!-- Project -->
+                    {{ form.project_formset.management_form }}
+                    <div id="form_set">
+                      {% for project_form in form.project_formset %}
+                        <div class="project_container">
+                        <h5>프로젝트 {{ project_form.id | safe }}</h5>
+                        {% if form.project_formset.can_delete %}
+                            {{ project_form.DELETE }}
+                            <input type="button" value="Project-" id="del_project_{{ forloop.counter0 }}">
+                        {% endif %}
+                        <div class="row">
+                          <div class="input-field col s6">
+                            <label for="name">project_name</label>
+                            {{ project_form.name | safe }}
+                          </div>
+                          <div class="input-field col s6">
+                            <label for="link">project_link</label>
+                            {{ project_form.link | safe }}
+                          </div>
+                        </div>
+                        </div>
+                      {% endfor %}
+                    </div>
+                    <!-- Certification -->
+                    {{ form.certification_formset.management_form }}
+                    <div id="crtf_form_set">
+                      {% for crtf_form in form.certification_formset %}
+                        <div class="certification_container">
+                        <h5>자격 수료 활동 {{ crtf_form.id | safe }}</h5>
+                        {% if form.certification_formset.can_delete %}
+                            {{ crtf_form.DELETE }}
+                            <input type="button" value="Certification-" id="del_crtf_{{ forloop.counter0 }}">
+                        {% endif %}
+                        <div class="row">
+                          <div class="input-field col s3">
+                            <label for="name">name</label>
+                            {{ crtf_form.name | safe }}
+                          </div>
+                          <div class="input-field col s3">
+                            {{ crtf_form.certificate_type | safe }}
+                            <label for="certificate_type">type</label>
+                          </div>
+                          <div class="input-field col s3">
+                            <label for="organization">org</label>
+                            {{ crtf_form.organization | safe }}
+                          </div>
+                          <div class="input-field col s3">
+                            <label for="date">date</label>
+                            {{ crtf_form.date | safe }}
+                          </div>
+                        </div>
+                        </div>
+                      {% endfor %}
+                    </div>
+                    <!-- Project Empty Form -->
+                    <div id="empty_form" style="display:none">
+                        <h5>프로젝트 {{ project_form.id | safe }}</h5>
+                        <input type="button" value="Project-" id="del_project_">
+                        <div class="row">
+                          <div class="input-field col s6">
+                            <label for="name">project_name</label>
+                            {{ form.project_formset.empty_form.name }}
+                          </div>
+                          <div class="input-field col s6">
+                            <label for="link">project_link</label>
+                            {{ form.project_formset.empty_form.link }}
+                          </div>
+                        </div>
+                    </div>
+                    <!-- Certification Empty Form -->
+                    <div id="crtf_empty_form" style="display: none">
+                        <h5>자격 수료 활동 {{ crtf_form.id | safe }}</h5>
+                        <input type="button" value="Certification-" id="del_crtf_">
+                        <div class="row">
+                          <div class="input-field col s3">
+                            <label for="name">name</label>
+                            {{ form.certification_formset.empty_form.name }}
+                          </div>
+                          <div class="input-field col s3">
+                            {{ form.certification_formset.empty_form.certificate_type }}
+                            <label for="certificate_type">type</label>
+                          </div>
+                          <div class="input-field col s3">
+                            <label for="organization">org</label>
+                            {{ form.certification_formset.empty_form.organization }}
+                          </div>
+                          <div class="input-field col s3">
+                            <label for="date">date</label>
+                            {{ form.certification_formset.empty_form.date }}
+                          </div>
+                        </div>
+                    </div>
+                    <div class="submit-row col">
+                        <input type="submit" class="waves-effect waves-light btn" name="push" value="Push">
+                    </div>
+                    {% if has_a_card %}
+                        <div class="submit-row col">
+                            <input type="submit" class="waves-effect waves-light btn" name="pop" value="Pop">
+                        </div>
+                    {% endif %}
+                  </form>
+                </div>
+              </div>
+              <div class="modal-footer">
+                <input type="button" value="Project+" id="add_project">
+                <input type="button" value="Certification+" id="add_crtf">
+                <a href="#!" class="modal-close waves-effect waves-green btn-flat">close</a>
+              </div>
+            </div>
+            {% endif %}
         </div>
 
 
@@ -58,5 +192,6 @@
     </footer>
   <!--JavaScript at end of body for optimized loading-->
   <script type="text/javascript" src="{% static 'js/materialize.min.js' %}"></script>
+  <script type="text/javascript" src="{% static 'js/main_stack.js' %}"></script>
   </body>
 </html>
