@@ -85,6 +85,29 @@ class MyUser(AbstractBaseUser):
         return self.is_admin
 
 
+# SKILL
+class Skill(models.Model):
+    # CHOICES
+    pl_c = 'C'
+    pl_java = 'JAVA'
+    pl_python = 'PYTHON'
+    PL_TYPE_CHOICES = (
+        (pl_c, 'C'),
+        (pl_java, 'JAVA'),
+        (pl_python, 'PYTHON'),
+    )
+
+    skill = models.CharField(
+        'skill',
+        max_length=10,
+        choices=PL_TYPE_CHOICES,
+        unique=True,
+    )
+
+    def __str__(self):
+        return self.skill
+
+
 # Card
 class Card(models.Model):
     # User_Card
@@ -96,6 +119,8 @@ class Card(models.Model):
     ) 
     
     homepage = models.URLField()
+    summary = models.CharField(max_length=50, null=True)
+    skills = models.ManyToManyField(Skill)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -110,7 +135,6 @@ class Project(models.Model):
         on_delete=models.CASCADE,
     )
     name = models.CharField(max_length = 30)
-    summary = models.TextField()
     link = models.URLField()
 
     def __str__(self):
