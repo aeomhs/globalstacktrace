@@ -72,27 +72,6 @@ def signup(request):
 
     return render(request, 'web/signup.html', {'form':form})
 
-# def main(request):
-#     profile = []
-#     try:
-#         cards = Card.objects.order_by('-created_at')[:6]
-#
-#         for card in cards:
-#             users = MyUser.objects.get(email=card)
-#             name = users.name
-#             email = users.email
-#             likeNum = len(Like.objects.filter(liked=card))
-#             homepage = card.homepage
-#             certifications = Certification.objects.filter(card=card)[0:2]
-#             profile.append({'name': name, 'email': email, 'likeNum': likeNum, 'homepage': homepage})
-#             ''''certification1': ('None' if certifications[0] is None else certifications[0]), 'certification2': ('None' if certifications[1] is None else certifications[1])'''
-#
-#
-#     except Card.DoesNotExist:
-#         raise Http404("Card does not exist.")
-#
-#     return render(request, 'web/main.html', {'profiles': profile})
-
 
 def main(request):
     profile = []

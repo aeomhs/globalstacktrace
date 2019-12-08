@@ -36,8 +36,25 @@
         </div>
       </nav>
     </header>
+
+    <div class="divider"></div>
+
     <main role="main" class="container">
+        <div class="row">
+            <div class="input-field col s2 offset-s10">
+                <select multiple>
+                    <option value="" disabled>Choose language</option>
+                    <option value="1">C</option>
+                    <option value="2">Java</option>
+                    <option value="3">Python</option>
+                </select>
+                <label>Selected language</label>
+            </div>
+
+        </div>
+
         <div class="row infinite-container">
+
             {% for profile in profiles %}
             <div class="col s4 m4 infinite-item">
                 <div class="card horizontal s4">
@@ -85,6 +102,9 @@
 
 
     <script>
+        M.AutoInit();
+
+
         var infinite = new Waypoint.Infinite({
             element: $('.infinite-container')[0],
 
@@ -124,7 +144,9 @@
         });
     </script>
 
+
     <script type="text/javascript">
+        //좋아요 버튼 스크립트
         $('.like').click(function(){
             var card = $(this).attr('name')
             $.ajax({
@@ -148,6 +170,19 @@
                 }
             });
         })
+    </script>
+    <script>
+        //언어 select 스크립트
+        $(document).ready(function(){
+            var elem = $('select').formSelect();
+
+            var instance = M.FormSelect.getInstance(elem);
+
+            var selected = instance.getSelectedValue();
+            console.log(selected)
+        });
+
+
     </script>
 
   </body>

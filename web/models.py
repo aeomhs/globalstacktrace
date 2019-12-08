@@ -185,7 +185,3 @@ class Like(models.Model):
 
     def __str__(self):
         return str(self.user)+" likes "+str(self.liked)
-
-class LikeManager(models.Manager):
-    def get_like_count(self, cardid):
-        return super().get_queryset().filter(card=cardid).count()
