@@ -56,9 +56,9 @@
             {% if logined %}
             <a class="btn-floating btn-large waves-effect waves-light red col 1 offset-l11 modal-trigger" href="#stack">
               {% if has_a_card %}
-              <i class="material-icons">mode_edit</i>
+              <i id="fab" class="material-icons">mode_edit</i>
               {% else %}
-              <i class="material-icons">add</i>
+              <i id="fab" class="material-icons">add</i>
               {% endif %}
             </a>
             <!-- Modal Structure -->
@@ -67,13 +67,22 @@
                 <div class="row">
                   <form class="col s12" method="post">
                     {% csrf_token %}
-                    <!-- Card Info -->
-                    <div class="row">
-                      <div class="input-field col s12">
+                      <div class="row">
+                        <div class="input-field col s12">
+                          <label for="summary">summary</label>
+                          {{ form.card_form.summary }}
+                        </div>
+                      </div>
+                      <div class="row">
+                      <div class="input-field col s8">
                         <label for="homepage">homepage</label>
                         {{ form.card_form.homepage }}
                       </div>
-                    </div>
+                      <div class="input-field col s4">
+                          {{ form.card_form.skill }}
+                        <label for="skill">skill</label>
+                       </div>
+                      </div>
                     <!-- Project -->
                     {{ form.project_formset.management_form }}
                     <div id="form_set">
@@ -185,8 +194,6 @@
             </div>
             {% endif %}
         </div>
-
-
     </main>
     <footer>
     </footer>

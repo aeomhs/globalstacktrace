@@ -1,30 +1,34 @@
+if(document.getElementById("fab").innerText === "add"){
 
-// Form 개수
-var form_num = document.getElementById("id_proj-TOTAL_FORMS").value;
-var crtf_num = document.getElementById("id_crtf-TOTAL_FORMS").value;
+} else{
+    // Form 개수
+    var form_num = document.getElementById("id_proj-TOTAL_FORMS").value;
+    var crtf_num = document.getElementById("id_crtf-TOTAL_FORMS").value;
 
-// 양식 제거 버튼 기능 추가
-for(var i=0; i < form_num; i++){
-    var btn_id = "del_project_"+i;
+    // 양식 제거 버튼 기능 추가
+    for(var i=0; i < form_num; i++){
+        var btn_id = "del_project_"+i;
 
-    document.getElementById(btn_id).addEventListener("click", function (e) {
-        var id = this.id.split("_")[2];
-        var del_id = "id_proj-"+id+"-DELETE";
-        document.getElementById(del_id).checked = true;
-        this.parentElement.style.display = 'none';
-    })
+        document.getElementById(btn_id).addEventListener("click", function (e) {
+            var id = this.id.split("_")[2];
+            var del_id = "id_proj-"+id+"-DELETE";
+            document.getElementById(del_id).checked = true;
+            this.parentElement.style.display = 'none';
+        })
+    }
+
+    for(i=0; i < crtf_num; i++){
+        btn_id = "del_crtf_"+i;
+
+        document.getElementById(btn_id).addEventListener("click", function (e) {
+            var id = this.id.split("_")[2];
+            var del_id = "id_crtf-"+id+"-DELETE";
+            document.getElementById(del_id).checked = true;
+            this.parentElement.style.display = 'none';
+        })
+    }
 }
 
-for(i=0; i < crtf_num; i++){
-    btn_id = "del_crtf_"+i;
-
-    document.getElementById(btn_id).addEventListener("click", function (e) {
-        var id = this.id.split("_")[2];
-        var del_id = "id_crtf-"+id+"-DELETE";
-        document.getElementById(del_id).checked = true;
-        this.parentElement.style.display = 'none';
-    })
-}
 
 // 양식 추가시, 양식 제거 버튼 기능 추가
 document.getElementById("add_project").addEventListener("click", function () {
@@ -90,3 +94,7 @@ function addSelectBoxEventListener()  {
     var elems = document.querySelectorAll('select');
     M.FormSelect.init(elems, options);
 }
+var opts = [
+    classes = "",
+    dropdownOptions = {}
+];

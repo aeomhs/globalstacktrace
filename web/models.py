@@ -118,10 +118,10 @@ class Card(models.Model):
     summary = models.CharField(max_length=50, null=True)
     skill = MultiSelectField(
         'skill',
-        max_length=10,
         max_choices=3,
         choices=PL_TYPE_CHOICES,
         null=True,
+        blank=True,
     )
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)

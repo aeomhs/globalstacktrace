@@ -35,9 +35,25 @@ class SignupForm(forms.Form):
 
 
 class CardForm(forms.ModelForm):
+    # SKILL CHOICES
+    pl_c = 'C'
+    pl_java = 'JAVA'
+    pl_python = 'PYTHON'
+    PL_TYPE_CHOICES = (
+        (pl_c, 'C'),
+        (pl_java, 'JAVA'),
+        (pl_python, 'PYTHON'),
+    )
+
+    skill = forms.MultipleChoiceField(
+        required=False,
+        widget=forms.SelectMultiple,
+        choices=PL_TYPE_CHOICES,
+    )
+
     class Meta:
         model = Card
-        fields = ['homepage']
+        fields = ['summary', 'homepage', 'skill']
 
 
 class ProjectForm(forms.ModelForm):

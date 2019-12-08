@@ -116,19 +116,19 @@ def main(request):
             # Stack Form PUSH
             if 'push' in request.POST:
                 card_form = CardForm(request.POST)
-                project_formset = ProjectFormSet(request.POST)
-                certification_formset = CertificationFormSet(request.POST)
-                print("1:", project_formset)
-                print("1:", certification_formset)
-                print("2:", project_formset.errors)
-                print("2:", certification_formset.errors)
+                project_formset = ProjectFormSet(request.POST, prefix='proj')
+                certification_formset = CertificationFormSet(request.POST, prefix='crtf')
 
                 if card_form.is_valid() and project_formset.is_valid() and certification_formset.is_valid():
-                    card = Card(owner=request.user, homepage=card_form.cleaned_data['homepage'])
+                    card = Card(
+                        owner=request.user,
+                        homepage=card_form.cleaned_data['homepage'],
+                        summary=card_form.cleaned_data['summary'],
+                        skill=card_form.cleaned_data['skill'],
+                    )
                     card.save()
 
                     projects = project_formset.save(commit=False)
-                    print("3:", project_formset.deleted_objects)
                     for project in projects:
                         project.card = card
                         project.save()
@@ -137,7 +137,6 @@ def main(request):
                         del_obj.delete()
 
                     certifications = certification_formset.save(commit=False)
-                    print("3:", certification_formset.deleted_objects)
                     for ctfc in certifications:
                         ctfc.card = card
                         ctfc.save()
@@ -158,16 +157,14 @@ def main(request):
 
             if has_a_card:
                 card = Card.objects.get(owner=user)
-                card_form = CardForm(initial={'homepage': card.homepage})
+                card_form = CardForm(initial={'homepage': card.homepage, 'skill': card.skill, 'summary': card.summary})
                 project_formset = ProjectFormSet(queryset=Project.objects.filter(card=card), prefix='proj')
                 certification_formset = CertificationFormSet(queryset=Certification.objects.filter(card=card), prefix='crtf')
-                print(certification_formset)
             else:
                 card_form = CardForm()
-                project_formset = ProjectFormSet()
-                certification_formset = CertificationFormSet()
+                project_formset = ProjectFormSet(prefix='proj')
+                certification_formset = CertificationFormSet(prefix='crtf')
 
-            print(certification_formset)
             stack_form = {'card_form': card_form, 'project_formset': project_formset,
                           'certification_formset': certification_formset}
 
