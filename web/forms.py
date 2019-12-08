@@ -35,10 +35,7 @@ class SignupForm(forms.Form):
             )
 
 
-# class LikeForm(forms.Form):
-#     class Meta:
-#         model = Like
-#         fields = ('user', 'liked',)
 
-
+class SearchForm(forms.Form):
+    word = forms.CharField(label='Search Word')
 

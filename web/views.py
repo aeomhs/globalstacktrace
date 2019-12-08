@@ -1,6 +1,6 @@
 from django.contrib.auth import authenticate, login, logout
 from django.shortcuts import reverse, redirect
-from .forms import LoginForm, SignupForm
+from .forms import LoginForm, SignupForm, SearchForm
 
 from django.shortcuts import render
 from django.utils import timezone
@@ -153,3 +153,10 @@ def like(request):
         context = {'email': req_email, 'likes_count': likes_count, 'message': 'like_increase'}
         return HttpResponse(json.dumps(context), content_type='application/json')
 
+
+def search_post(requset):
+
+    form = SearchForm
+
+
+    return 0
