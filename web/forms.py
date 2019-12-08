@@ -1,5 +1,6 @@
 from django import forms
-from .models import MyUser
+from .models import MyUser, Card, Project, Certification
+
 
 class LoginForm(forms.Form):
     email = forms.EmailField()
@@ -8,10 +9,11 @@ class LoginForm(forms.Form):
     email.widget.attrs.update({'class': 'validate'})
     password.widget.attrs.update({'class': 'validate'})
 
+
 class SignupForm(forms.Form):
     email = forms.EmailField()
     name = forms.CharField()
-    date_of_birth = forms.DateField(widget=forms.DateInput(format = '%Y-%m-%d'))
+    date_of_birth = forms.DateField(widget=forms.DateInput(format='%Y-%m-%d'))
     password = forms.CharField(widget=forms.PasswordInput())
     confirm_password = forms.CharField(widget=forms.PasswordInput())
 
@@ -30,3 +32,21 @@ class SignupForm(forms.Form):
             raise forms.ValidationError(
                 "password and confirm_password does not match"
             )
+
+
+class CardForm(forms.ModelForm):
+    class Meta:
+        model = Card
+        fields = ['homepage']
+
+
+class ProjectForm(forms.ModelForm):
+    class Meta:
+        model = Project
+        fields = ['name', 'summary', 'link']
+
+
+class CertificationForm(forms.ModelForm):
+    class Meta:
+        model = Certification
+        fields = ['name', 'date', 'certificate_type', 'organization']

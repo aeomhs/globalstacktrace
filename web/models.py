@@ -3,6 +3,7 @@ from django.contrib.auth.models import (
     # https://docs.djangoproject.com/en/2.2/topics/auth/customizing/
     BaseUserManager, AbstractBaseUser
 )
+from django.utils import timezone
 
 
 class MyUserManager(BaseUserManager):
@@ -44,7 +45,7 @@ class MyUserManager(BaseUserManager):
 
 # User
 class MyUser(AbstractBaseUser):
-    name = models.CharField(max_length = 30)
+    name = models.CharField(max_length=30)
     email = models.EmailField(
         verbose_name='email address',
         max_length=255,
@@ -58,12 +59,12 @@ class MyUser(AbstractBaseUser):
     objects = MyUserManager()
 
     USERNAME_FIELD = 'email'
-    REQUIRED_FIELDS = ['name','date_of_birth']
+    REQUIRED_FIELDS = ['name', 'date_of_birth']
 
     # Created & Updated Time
     # https://stackoverflow.com/questions/3429878/automatic-creation-date-for-django-model-form-objects
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
+    created_at = models.DateTimeField(editable=False)
+    updated_at = models.DateTimeField()
 
     def __str__(self):
         return self.email
@@ -84,6 +85,13 @@ class MyUser(AbstractBaseUser):
         # Simplest possible answer: All admins are staff
         return self.is_admin
 
+    def save(self, *args, **kwargs):
+        ''' On save, update timestamps '''
+        if not self.id:
+            self.created_at = timezone.now()
+        self.updated_at = timezone.now()
+        return super(MyUser, self).save(*args, **kwargs)
+
 
 # Card
 class Card(models.Model):
@@ -92,15 +100,22 @@ class Card(models.Model):
     owner = models.OneToOneField(
         MyUser, 
         on_delete=models.CASCADE, 
-        primary_key = True,
+        primary_key=True,
     ) 
     
     homepage = models.URLField()
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
+    created_at = models.DateTimeField(editable=False)
+    updated_at = models.DateTimeField()
 
     def __str__(self):
         return str(self.owner)
+
+    def save(self, *args, **kwargs):
+        ''' On save, update timestamps '''
+        if self.created_at is None:
+            self.created_at = timezone.now()
+        self.updated_at = timezone.now()
+        return super(Card, self).save(*args, **kwargs)
 
 
 # Project
@@ -109,7 +124,7 @@ class Project(models.Model):
         Card, 
         on_delete=models.CASCADE,
     )
-    name = models.CharField(max_length = 30)
+    name = models.CharField(max_length=30)
     summary = models.TextField()
     link = models.URLField()
 
@@ -134,9 +149,9 @@ class Certification(models.Model):
         on_delete=models.CASCADE,
     )
 
-    date = models.DateTimeField()
+    date = models.DateField()
     name = models.CharField('name', max_length=20)
-    cerification_type = models.CharField(
+    certificate_type = models.CharField(
         'type', 
         max_length=3, 
         choices=CERTIFICATION_TYPE_CHOICES,
