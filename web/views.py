@@ -1,6 +1,8 @@
 from django.contrib.auth import authenticate, login, logout
-from django.shortcuts import reverse, redirect
-from .forms import LoginForm, SignupForm#, SearchForm
+
+from django.shortcuts import redirect
+from .forms import LoginForm, SignupForm, CardForm, ProjectForm, CertificationForm
+from django.forms import modelformset_factory
 
 from django.shortcuts import render
 from django.utils import timezone
@@ -13,7 +15,7 @@ from .models import MyUser
 from django.http import Http404
 from .models import MyUser
 from .models import Card
-from .models import Certification
+from .models import Project, Certification
 from .models import Like
 
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
@@ -24,7 +26,8 @@ def index(request):
     logined = False
     if request.user.is_authenticated:
         logined = True
-    return render(request, 'web/index.html', {'logined':logined} )
+    return render(request, 'web/index.html', {'logined': logined} )
+
 
 # 로그인 페이지 구현
 def signin(request):
@@ -36,18 +39,22 @@ def signin(request):
             user = authenticate(request, email=email, password=password)
             if user is not None:
                 login(request, user)
-                return redirect('index')
-            else :
+                # return redirect('index')
+                return redirect('main')
+            else:
                 return redirect('signin')
     else:
         form = LoginForm()
 
-    return render(request, 'web/signin.html', {'form':form})
+    return render(request, 'web/signin.html', {'form': form})
+
 
 # Logout
 def user_logout(request):
     logout(request)
-    return redirect('index')
+    # return redirect('index')
+    return redirect('main')
+
 
 # 회원가입 페이지 구현
 def signup(request):
@@ -55,7 +62,6 @@ def signup(request):
         form = SignupForm(request.POST)
         
         if form.is_valid():
-            print("valied")
             user = MyUser.objects.create_user(
                 form.cleaned_data['name'],
                 form.cleaned_data['email'],
@@ -64,16 +70,31 @@ def signup(request):
             )
             user.save()
             login(request, user)
-            return redirect('index')
+            # return redirect('index')
+            return redirect('main')
         else:
             return redirect('signup')
-    else :
+    else:
         form = SignupForm()
 
-    return render(request, 'web/signup.html', {'form':form})
+    return render(request, 'web/signup.html', {'form': form})
+
 
 
 def main(request):
+    logined = False
+    has_a_card = False
+
+    # Login Check
+    if request.user.is_authenticated:
+        logined = True
+
+        # Card Check
+        user = request.user
+        card = Card.objects.filter(owner=user)
+        if card.count() >= 1:
+            has_a_card = True
+
     profile = []
     try:
         selected_lang = request.POST.get('selected_lang', None)
@@ -106,6 +127,72 @@ def main(request):
 
         profiles = paginator.page(page)
 
+        arguments = {'profiles': profiles, 'logined': logined, 'has_a_card': has_a_card}
+
+        # FAB : Stack PUSH & POP (# Stack Edit Modal)
+        ProjectFormSet = modelformset_factory(
+            Project, form=ProjectForm, extra=0, can_delete=True, min_num=0
+        )
+        CertificationFormSet = modelformset_factory(
+            Certification, form=CertificationForm, extra=0, can_delete=True, min_num=0
+        )
+        if request.method == 'POST':
+            # Stack Form PUSH
+            if 'push' in request.POST:
+                card_form = CardForm(request.POST)
+                project_formset = ProjectFormSet(request.POST, prefix='proj')
+                certification_formset = CertificationFormSet(request.POST, prefix='crtf')
+
+                if card_form.is_valid() and project_formset.is_valid() and certification_formset.is_valid():
+                    card = Card(
+                        owner=request.user,
+                        homepage=card_form.cleaned_data['homepage'],
+                        summary=card_form.cleaned_data['summary'],
+                        skill=card_form.cleaned_data['skill'],
+                    )
+                    card.save()
+
+                    projects = project_formset.save(commit=False)
+                    for project in projects:
+                        project.card = card
+                        project.save()
+
+                    for del_obj in project_formset.deleted_objects:
+                        del_obj.delete()
+
+                    certifications = certification_formset.save(commit=False)
+                    for ctfc in certifications:
+                        ctfc.card = card
+                        ctfc.save()
+
+                    for del_obj in certification_formset.deleted_objects:
+                        del_obj.delete()
+
+                return redirect('main')
+
+            # Stack Form POP
+            elif 'pop' in request.POST:
+                card = Card.objects.get(owner=request.user)
+                card.delete()
+                return redirect('main')
+        # GET Stack Edit Modal
+        else:
+            user = request.user
+
+            if has_a_card:
+                card = Card.objects.get(owner=user)
+                card_form = CardForm(initial={'homepage': card.homepage, 'skill': card.skill, 'summary': card.summary})
+                project_formset = ProjectFormSet(queryset=Project.objects.filter(card=card), prefix='proj')
+                certification_formset = CertificationFormSet(queryset=Certification.objects.filter(card=card), prefix='crtf')
+            else:
+                card_form = CardForm()
+                project_formset = ProjectFormSet(prefix='proj')
+                certification_formset = CertificationFormSet(prefix='crtf')
+
+            stack_form = {'card_form': card_form, 'project_formset': project_formset,
+                          'certification_formset': certification_formset}
+
+            arguments = {'profiles': profiles, 'logined': logined, 'has_a_card': has_a_card, 'form': stack_form}
 
     except Card.DoesNotExist:
         raise Http404("Card does not exist.")
@@ -113,13 +200,11 @@ def main(request):
         profiles = paginator.page(1)
     except EmptyPage:
         profiles = paginator.page(paginator.num_pages)
-
-
-    return render(request, 'web/main.html', {'profiles': profiles})
+        
+    return render(request, 'web/main.html', arguments)
 
 
 def like(request):
-
     if not request.user.is_authenticated:
         return redirect('signin')
 
@@ -143,4 +228,3 @@ def like(request):
         print('like increase, current like:', likes_count)
         context = {'email': req_email, 'likes_count': likes_count, 'message': 'like_increase'}
         return HttpResponse(json.dumps(context), content_type='application/json')
-

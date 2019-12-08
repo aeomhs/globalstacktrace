@@ -11,7 +11,6 @@ from .models import Card
 from .models import Project
 from .models import Certification
 from .models import Like
-from .models import Skill
 
 
 class UserCreationForm(forms.ModelForm):
@@ -96,6 +95,5 @@ admin.site.unregister(Group)
 
 admin.site.register(Card)
 admin.site.register(Project)
-admin.site.register(Skill)
 admin.site.register(Certification)
 admin.site.register(Like)
