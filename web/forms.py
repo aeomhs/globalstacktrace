@@ -43,7 +43,7 @@ class CardForm(forms.ModelForm):
 class ProjectForm(forms.ModelForm):
     class Meta:
         model = Project
-        fields = ['name', 'summary', 'link']
+        fields = ['name', 'link']
 
 
 class CertificationForm(forms.ModelForm):

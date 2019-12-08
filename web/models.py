@@ -4,6 +4,7 @@ from django.contrib.auth.models import (
     BaseUserManager, AbstractBaseUser
 )
 from django.utils import timezone
+from multiselectfield import MultiSelectField
 
 
 class MyUserManager(BaseUserManager):
@@ -95,6 +96,16 @@ class MyUser(AbstractBaseUser):
 
 # Card
 class Card(models.Model):
+    # SKILL CHOICES
+    pl_c = 'C'
+    pl_java = 'JAVA'
+    pl_python = 'PYTHON'
+    PL_TYPE_CHOICES = (
+        (pl_c, 'C'),
+        (pl_java, 'JAVA'),
+        (pl_python, 'PYTHON'),
+    )
+
     # User_Card
     # One to One
     owner = models.OneToOneField(
@@ -104,8 +115,16 @@ class Card(models.Model):
     ) 
     
     homepage = models.URLField()
-    created_at = models.DateTimeField(editable=False)
-    updated_at = models.DateTimeField()
+    summary = models.CharField(max_length=50, null=True)
+    skill = MultiSelectField(
+        'skill',
+        max_length=10,
+        max_choices=3,
+        choices=PL_TYPE_CHOICES,
+        null=True,
+    )
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
         return str(self.owner)
@@ -124,8 +143,8 @@ class Project(models.Model):
         Card, 
         on_delete=models.CASCADE,
     )
-    name = models.CharField(max_length=30)
-    summary = models.TextField()
+
+    name = models.CharField(max_length = 30)
     link = models.URLField()
 
     def __str__(self):
