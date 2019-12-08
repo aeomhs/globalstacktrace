@@ -32,13 +32,18 @@
             <div class="col s4 m4">
                 <div class="card horizontal s4">
                     <div class="card-image">
-                        <img src="https://lorempixel.com/100/190/nature/6">
+                        <!--<img src="https://lorempixel.com/100/190/nature/6">-->
                     </div>
                     <div class="card-stacked">
                         <div class="row">
-                            <div class="card-title col s4">{{ profile.name }}</div>
-                            <div class="card-content col s4 offset-s4">{{ profile.likeNum }}개</div>
+                            <div class="card-title col s4">{{ profile.name }}<br>{{ profile.email }}</div>
+                            <form class="col s12" method="post">
+                                {% csrf_token %}
+                                <!--<input type="button" class="like" name="{{ profile.email }}" value="Like">-->
+                            </form>
+                            <div id="{{ profile.email }}" class="card-content col s4 offset-s4">{{ profile.likeNum }}개</div>
                         </div>
+                        <a class="like" name="{{ profile.email }}"><i id='like_icon_{{ profile.email }}', class="material-icons">favorite</i></a>
                         <div class="card-content">
                             <p>certifications</p>
                         </div>
@@ -56,7 +61,40 @@
     </main>
     <footer>
     </footer>
-  <!--JavaScript at end of body for optimized loading-->
-  <script type="text/javascript" src="{% static 'js/materialize.min.js' %}"></script>
+    <!--JavaScript at end of body for optimized loading-->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script type="text/javascript" src="{% static 'js/materialize.min.js' %}"></script>
+    <script type="text/javascript">
+        $('.like').click(function(){
+            var card = $(this).attr('name')
+            $.ajax({
+                type: "POST",
+                url: "{% url 'like' %}",
+                data: {'card': card, 'csrfmiddlewaretoken': '{{ csrf_token }}'},
+                dataType: "json",
+
+                success: function(response){
+                    var like_icon = 'like_icon_'+response.email;
+{#                    console.log(like_icon)#}
+                    var elmt = document.getElementById(response.email)
+                    document.getElementById(response.email).innerHTML = response.likes_count+'개';
+                    if(response.message == 'like_increase'){
+
+                        document.getElementById(like_icon).innerText = 'favorite';
+{#                        elmt.parentElement.parentElement.children[1].children[0].innerText = "favorite"#}
+{#                        console.log("increase" + elmt.parentElement.parentElement.children[1].children[0]);#}
+                    }else if(response.message == 'like_decrease'){
+                        document.getElementById(like_icon).innerText = 'favorite_border';
+{#                        elmt.parentElement.parentElement.children[1].children[0].innerText = "favorite_border"#}
+{#                        console.log("increase" + elmt.parentElement.parentElement.children[1].children[0]);#}
+                    }
+                },
+                error:function(request,status,error){
+                    alert("code:"+request.status+"\n"+"message:"+request.responseText+"\n"+"error:"+error);
+                }
+            });
+        })
+    </script>
+
   </body>
 </html>

@@ -11,4 +11,5 @@ urlpatterns = [
     path('signup/', views.signup, name='signup'),
     # 메인 페이지 by 진호
     path('main/', views.main, name='main'),
+    path('like/', views.like, name='like'),
 ]

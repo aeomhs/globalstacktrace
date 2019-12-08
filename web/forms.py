@@ -1,5 +1,7 @@
 from django import forms
 from .models import MyUser
+from .models import Like
+
 
 class LoginForm(forms.Form):
     email = forms.EmailField()
@@ -7,6 +9,7 @@ class LoginForm(forms.Form):
     
     email.widget.attrs.update({'class': 'validate'})
     password.widget.attrs.update({'class': 'validate'})
+
 
 class SignupForm(forms.Form):
     email = forms.EmailField()
@@ -30,3 +33,12 @@ class SignupForm(forms.Form):
             raise forms.ValidationError(
                 "password and confirm_password does not match"
             )
+
+
+# class LikeForm(forms.Form):
+#     class Meta:
+#         model = Like
+#         fields = ('user', 'liked',)
+
+
+
