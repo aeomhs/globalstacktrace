@@ -97,20 +97,15 @@ def main(request):
 
     profile = []
     try:
-        selected_lang = request.POST.get('selected_lang', None)
-        search_summary = request.POST.get('search_summary', None)
-
-        print(selected_lang,'-----------')
-        print(search_summary,'------')
-
         card_list = Card.objects.order_by('-created_at')
+        # Search
+        search_summary = request.GET.get('search_summary', None)
+        if search_summary is not None:
+            card_list = card_list.filter(summary__contains=search_summary)
 
         # 이건 해당 언어가 있는글만 출력해야댐
         # if selected_lang is not None:
         #     card_list = card_list.filter(summary__contains=)
-
-        if search_summary is not None:
-            card_list = card_list.filter(summary__contains=search_summary)
 
         for card in card_list:
             users = MyUser.objects.get(email=card)

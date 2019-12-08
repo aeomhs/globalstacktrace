@@ -19,6 +19,15 @@
         <div class="nav-wrapper">
           <a href="#" class="brand-logo">Global Stack Trace</a>
           <ul id="nav-mobile" class="right hide-on-med-and-down">
+            <li>
+                <form action="{% url 'main' %}" method="get">
+                    <div class="input-field">
+                        <input id="search" type="search" name="search_summary" required>
+                        <label class="label-icon" for="search"><i class="material-icons">search</i></label>
+                        <i class="material-icons">close</i>
+                    </div>
+                </form>
+            </li>
             {% if logined %}
             <li><span>{{ user.name }}</span></li>
             <li><a href="/user_logout/">logout</a></li>
@@ -34,20 +43,6 @@
     <div class="divider"></div>
 
     <main role="main" class="container">
-        <div class="row">
-            <div class="input-field col s2 offset-s10">
-                <select multiple id="select_lang" name='select_lang'>
-                    <option value="" disabled>Choose language</option>
-                    <option value="C">C</option>
-                    <option value="Java">Java</option>
-                    <option value="Python">Python</option>
-                    <option value="Confirm">확인</option>
-                </select>
-                <label>Selected language</label>
-            </div>
-
-        </div>
-
         <div class="row infinite-container">
 
             {% for profile in profiles %}
@@ -296,26 +291,6 @@
                 }
             });
         })
-    </script>
-    <script>
-        //언어 select 스크립트
-
-        $(document).ready(function(){
-            $('select').formSelect()
-
-            $('select').change(function(){
-                var selected_lang =  $(this).val();
-                console.log(selected_lang.length)
-
-                if(selected_lang['Confirm'] == true){
-                    console.log('ss')
-                }
-
-                //window.location.href = "location.href='/article//'";
-
-            })
-
-        });
     </script>
   </body>
 </html>
