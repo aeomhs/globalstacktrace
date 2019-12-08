@@ -40,7 +40,7 @@
 
                             <div id="{{ profile.email }}" class="card-content col s4 offset-s4">{{ profile.likeNum }}개</div>
                         </div>
-                        <a class="like" name="{{ profile.email }}"><i id='like_icon_{{ profile.email }}', class="material-icons">favorite</i></a>
+                        <a class="like" name="{{ profile.email }}"><i id='like_icon_{{ profile.email }}' class="material-icons">favorite</i></a>
                         <div class="card-content">
                             <p>certifications</p>
                         </div>
@@ -84,7 +84,31 @@
             },
             onAfterPageLoad: function ($items) {
                 $('.loading').hide();
-                console.log('loading hide')
+                console.log('loading hide');
+                $('.like').off();
+                $('.like').click(function(){
+                    var card = $(this).attr('name')
+                    $.ajax({
+                        type: "POST",
+                        url: "{% url 'like' %}",
+                        data: {'card': card, 'csrfmiddlewaretoken': '{{ csrf_token }}'},
+                        dataType: "json",
+
+                        success: function(response){
+                            var like_icon = 'like_icon_'+response.email;
+                            var elmt = document.getElementById(response.email)
+                            document.getElementById(response.email).innerHTML = response.likes_count+'개';
+                            if(response.message == 'like_increase'){
+                                document.getElementById(like_icon).innerText = 'favorite';
+                            }else if(response.message == 'like_decrease'){
+                                document.getElementById(like_icon).innerText = 'favorite_border';
+                            }
+                        },
+                        error:function(request,status,error){
+                            alert("code:"+request.status+"\n"+"message:"+request.responseText+"\n"+"error:"+error);
+                        }
+                    });
+                })
 
             }
         });
