@@ -114,31 +114,40 @@ def main(request):
 
         temp_list = []
         C_lang = request.GET.get('C', None)
+        Java_lang = request.GET.get('JAVA', None)
+        Python_lang = request.GET.get('PYTHON', None)
         if C_lang is not None:
-            checkbox_list['C'] = 'checked'
-            for card in card_list:
-                for skill in card.skill:
-                    if skill == 'C':
-                        temp_list.append(card.owner)
+            temp_list.append('C')
+            checkbox_list['C'] = 'checked'  #검색후에 값이 그대로 남아있게 하기위해
 
-        print(temp_list)
-        card_list = card_list.filter(owner__in=temp_list)
+        if Java_lang is not None:
+            temp_list.append('JAVA')
+            checkbox_list['JAVA'] = 'checked'  #검색후에 값이 그대로 남아있게 하기위해
 
-            # None_num += 1
+        if Python_lang is not None:
+            temp_list.append('PYTHON')
+            checkbox_list['PYTHON'] = 'checked'  #검색후에 값이 그대로 남아있게 하기위해
 
-        # Java_lang = request.GET.get('JAVA', None)
-        # if Java_lang is not None:
-        #     # card_list.filter(skill=Java_lang)
-        #     checkbox_list['JAVA'] = 'checked'
-        #     filter_list.append('JAVA')
-        #     None_num += 1
-        #
-        # Python_lang = request.GET.get('PYTHON', None)
-        # if Python_lang is not None:
-        #     # card_list.filter(skill=Python_lang)
-        #     checkbox_list['PYTHON'] = 'checked'
-        #     filter_list.append('PYTHON')
-        #     None_num += 1
+
+
+        for card in card_list:
+            i = 0
+            if len(temp_list) > len(card.skill):
+                card_list.exclude(owner=card.owner)
+                break
+
+            for skill in card.skill:
+
+                for temp in temp_list:
+                    if skill == temp:
+                        i += 1
+
+            print(i,'--',len(temp_list))
+            if i < len(temp_list):
+                print(card.owner.email)
+                card_list = card_list.exclude(owner=card.owner)
+
+
 
 
 
