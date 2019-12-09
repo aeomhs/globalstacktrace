@@ -16,7 +16,7 @@
   </head>
   <body>
     <header>
-      <nav>
+      <nav class="grey darken-4">
           <div class="nav-wrapper row">
               <a href="#" class="brand-logo">Global Stack Trace</a>
               <form class="offset-s2 col s8">
@@ -37,7 +37,7 @@
                           <input type="checkbox" {{ checkbox_list.PYTHON }} name="PYTHON" value="PYTHON"/><span class="check_margin">Python</span>
                       </label>
                       <label>
-                          <input type="submit" value="Search">
+                          <input class="material-icons" type="submit" value="search">
                       </label>
                   </div>
 
@@ -97,7 +97,7 @@
                             </div>
                         </div>
                         <div class="card-action">
-                            <a href="{{ profile.homepage }}">Go to Homepage</a>
+                            <a style="color: #417690 " href="{{ profile.homepage }}">Go to Homepage</a>
                         </div>
                     </div>
                 </div>
@@ -118,9 +118,9 @@
             {% if logined %}
             <a class="btn-floating btn-large waves-effect waves-light red col 1 offset-l11 modal-trigger" href="#stack">
               {% if has_a_card %}
-              <i id="fab" class="material-icons">mode_edit</i>
+              <i id="fab" class="material-icons grey darken-4">mode_edit</i>
               {% else %}
-              <i id="fab" class="material-icons">add</i>
+              <i id="fab" class="material-icons grey darken-4">add</i>
               {% endif %}
             </a>
             <!-- Modal Structure -->
