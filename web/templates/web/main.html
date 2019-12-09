@@ -62,46 +62,27 @@
         <div class="row infinite-container">
             {% for profile in profiles %}
             <div class="col s4 m4 infinite-item">
-                <div class="card large horizontal">
-                    <div class="card-stacked">
-                        <div class="card-title col offset-s1">
+                <div class="card large">
+                    <div class="card-content">
+                        <div class="card-title">
                             <div class="row">
                                 <h6>{{ profile.email }}</h6>
-                                <span class="right-aligned" style="font-weight: 700">{{ profile.name }}</span><br>
+                                <span class="card-title activator grey-text text-darken-4 right-aligned" style="font-weight: 700">{{ profile.name }}<i class="material-icons right">more_vert</i></span><br>
                                 <span style="font-size: 1rem">[</span>
                                 {% for skill in profile.skill %}
                                     <span style="font-size: 1rem">{{ skill }}</span>,
                                 {% endfor %}
                                 <span style="font-size: 1rem">]</span>
                             </div>
+                            <span class=""></span>
                         </div>
-                        <div class="card-content col offset-s1">
-                            <div class="row">
-                                <p>
-                                    {{ profile.summary }}
-                                </p>
-                            </div>
-                        </div>
+
                         <div class="row">
-                            <div class="col offset-s2">
-                                <span id="like_{{ profile.email }}">{{ profile.likeNum }}</span>개
-                            </div>
-                            <div class="col offset-s3">
-                                <a class="like" name="{{ profile.email }}">
-                                    {% if profile.liked %}
-                                        <i id='like_icon_{{ profile.email }}' class="material-icons">favorite</i>
-                                    {% else %}
-                                        <i id='like_icon_{{ profile.email }}' class="material-icons">favorite_border</i>
-                                    {% endif %}
-                                </a>
-                            </div>
+                            <p>
+                                {{ profile.summary }}
+                            </p>
                         </div>
-                        <div class="card-action">
-                            <a style="color: #417690 " href="{{ profile.homepage }}">Go to Homepage</a>
-                        </div>
-                    </div>
-                    <div class="card-content">
-                        <span class="card-title activator grey-text text-darken-4">Detail<i class="material-icons right">more_vert</i></span>
+
                     </div>
                     <div class="card-reveal">
                         <span class="card-title grey-text text-darken-4 center">Project<i class="material-icons right">close</i></span>
@@ -115,6 +96,23 @@
                                 <p>{{ certification.date }}</p>
                         {% endfor %}
                     </div>
+                    <div class="card-action">
+                            <div class="row">
+                                <div class="col s6">
+                                    <a style="color: #417690 " href="{{ profile.homepage }}">Go to Homepage</a>
+                                </div>
+                                <div class="col right">
+                                    <span id="like_{{ profile.email }}">{{ profile.likeNum }}</span>개
+                                    <a class="like" name="{{ profile.email }}">
+                                        {% if profile.liked %}
+                                            <i id='like_icon_{{ profile.email }}' class="material-icons">favorite</i>
+                                        {% else %}
+                                            <i id='like_icon_{{ profile.email }}' class="material-icons">favorite_border</i>
+                                        {% endif %}
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
                 </div>
 
             </div>
