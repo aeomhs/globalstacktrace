@@ -124,6 +124,7 @@
             </div>
             {% endfor %}
         </div>
+
         {% if profiles.has_next %}
 {#            <a class="infinite-more-link" href="?page={{ profiles.next_page_number }}">More</a>#}
 
@@ -133,7 +134,7 @@
         <div class="loading" style="display: none;">
             Loading...
         </div>
-        <div class="fixed-action-btn">
+        <div class="row">
             {% if logined %}
             <a class="btn-floating btn-large waves-effect waves-light red col 1 offset-l11 modal-trigger" href="#stack">
               {% if has_a_card %}
@@ -278,6 +279,7 @@
   </main>
   <footer>
   </footer>
+  </body>
   <!--JavaScript at end of body for optimized loading-->
   <script type="text/javascript" src="{% static 'js/materialize.min.js' %}"></script>
   <script type="text/javascript" src="{% static 'js/main_stack.js' %}"></script>
