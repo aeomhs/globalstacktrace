@@ -106,7 +106,9 @@
             {% endfor %}
         </div>
         {% if profiles.has_next %}
-            <a class="infinite-more-link" href="?page={{ profiles.next_page_number }}">More</a>
+{#            <a class="infinite-more-link" href="?page={{ profiles.next_page_number }}">More</a>#}
+
+            <a class="infinite-more-link" href="?search_summary={{ get_request_list.search_summary }}&C={{ get_request_list.C }}&JAVA={{ get_request_list.JAVA }}&PYTHON={{ get_request_list.PYTHON }}&page={{ profiles.next_page_number }}">More</a>
         {% endif %}
 
         <div class="loading" style="display: none;">
@@ -285,8 +287,8 @@
 
                         success: function(response){
                             var like_icon = 'like_icon_'+response.email;
-                            var elmt = document.getElementById(response.email)
-                            document.getElementById(response.email).innerHTML = response.likes_count+'개';
+                            var like_id = "like_"+response.email;
+                            document.getElementById(like_id).innerText = response.likes_count;
                             if(response.message == 'like_increase'){
                                 document.getElementById(like_icon).innerText = 'favorite';
                             }else if(response.message == 'like_decrease'){
@@ -317,8 +319,6 @@
                 success: function(response){
                     var like_icon = 'like_icon_'+response.email;
                     var like_id = "like_"+response.email;
-                    {#var elmt = document.getElementById(response.email)#}
-                    {#document.getElementById(response.email).innerHTML = response.likes_count+'개';#}
                     document.getElementById(like_id).innerText = response.likes_count;
                     if(response.message == 'like_increase'){
                         document.getElementById(like_icon).innerText = 'favorite';

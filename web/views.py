@@ -81,7 +81,6 @@ def signup(request):
     return render(request, 'web/signup.html', {'form': form})
 
 
-
 def main(request):
     logined = False
     has_a_card = False
@@ -96,61 +95,65 @@ def main(request):
         if card.count() >= 1:
             has_a_card = True
 
-    profile = []
     checkbox_list = {'C': '', 'JAVA': '', 'PYTHON': '', 'search_summary': ''}
-    filter_list = []
-    None_num = 0;
+    get_request_list = {'C': '', 'JAVA': '', 'PYTHON': '', 'search_summary': ''}
 
     try:
+
+        page = request.GET.get('page', 1)
+
         card_list = Card.objects.order_by('-created_at')
         # Search
         search_summary = request.GET.get('search_summary', None)
-        if search_summary is not None:
+        if search_summary is not None and search_summary != '':
             card_list = card_list.filter(summary__contains=search_summary)
             checkbox_list['search_summary'] = search_summary
-            None_num += 1
+            get_request_list['search_summary'] = search_summary
 
-        print(card_list,'---')
+
 
         temp_list = []
         C_lang = request.GET.get('C', None)
         Java_lang = request.GET.get('JAVA', None)
         Python_lang = request.GET.get('PYTHON', None)
-        if C_lang is not None:
+        if C_lang is not None and C_lang != '':
             temp_list.append('C')
             checkbox_list['C'] = 'checked'  #검색후에 값이 그대로 남아있게 하기위해
+            get_request_list['C'] = 'C'
 
-        if Java_lang is not None:
+        if Java_lang is not None and Java_lang != '':
             temp_list.append('JAVA')
             checkbox_list['JAVA'] = 'checked'  #검색후에 값이 그대로 남아있게 하기위해
+            get_request_list['JAVA'] = 'JAVA'
 
-        if Python_lang is not None:
+        if Python_lang is not None and Python_lang != '':
             temp_list.append('PYTHON')
             checkbox_list['PYTHON'] = 'checked'  #검색후에 값이 그대로 남아있게 하기위해
+            get_request_list['PYTHON'] = 'PYTHON'
 
 
 
+        delete_list = []
         for card in card_list:
             i = 0
             if len(temp_list) > len(card.skill):
-                card_list.exclude(owner=card.owner)
-                break
+                delete_list.append(card)
+                continue
 
             for skill in card.skill:
-
                 for temp in temp_list:
                     if skill == temp:
                         i += 1
 
-            print(i,'--',len(temp_list))
             if i < len(temp_list):
-                print(card.owner.email)
-                card_list = card_list.exclude(owner=card.owner)
+                delete_list.append(card)
+
+        for d_card in delete_list:
+            card_list = card_list.exclude(owner=d_card)
 
 
 
-
-
+        profile = []
         for card in card_list:
             users = MyUser.objects.get(email=card)
             name = users.name
@@ -166,7 +169,6 @@ def main(request):
                 if result.count() == 1:
                     liked = True
 
-            certifications = Certification.objects.filter(card=card)[0:2]
             profile.append({
                 'name': name,
                 'email': email,
@@ -176,9 +178,9 @@ def main(request):
                 'skill': skill,
                 'liked': liked})
 
-        page = request.GET.get('page', 1)
         paginator = Paginator(profile, 6)
 
+        print(page,'----------------------')
         profiles = paginator.page(page)
 
         arguments = {'profiles': profiles, 'logined': logined, 'has_a_card': has_a_card}
@@ -246,18 +248,20 @@ def main(request):
             stack_form = {'card_form': card_form, 'project_formset': project_formset,
                           'certification_formset': certification_formset}
 
-            arguments = {'profiles': profiles, 'logined': logined, 'has_a_card': has_a_card, 'form': stack_form, 'checkbox_list': checkbox_list}
+            arguments = {'profiles': profiles, 'logined': logined, 'has_a_card': has_a_card, 'form': stack_form, 'checkbox_list': checkbox_list, 'get_request_list': get_request_list}
 
     except Card.DoesNotExist:
         raise Http404("Card does not exist.")
     except PageNotAnInteger:
         profiles = paginator.page(1)
+        arguments = {'profiles': profiles, 'logined': logined, 'has_a_card': has_a_card,
+                     'checkbox_list': checkbox_list}
+        return render(request, 'web/main.html', arguments)
     except EmptyPage:
         profiles = paginator.page(paginator.num_pages)
-
-    if None_num == 4:
-        arguments['profiles'] = None
-        print('Noooooooooooooooooooooooooooooooooon')
+        print('dddddddddddddd',paginator.num_pages)
+        arguments = {'profiles': profiles, 'logined': logined, 'has_a_card': has_a_card,
+                     'checkbox_list': checkbox_list}
         return render(request, 'web/main.html', arguments)
 
     return render(request, 'web/main.html', arguments)
