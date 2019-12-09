@@ -21,6 +21,7 @@ from .models import Like
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
 
+
 # Create your views here.
 def index(request):
     logined = False
@@ -96,16 +97,50 @@ def main(request):
             has_a_card = True
 
     profile = []
+    checkbox_list = {'C': '', 'JAVA': '', 'PYTHON': '', 'search_summary': ''}
+    filter_list = []
+    None_num = 0;
+
     try:
         card_list = Card.objects.order_by('-created_at')
         # Search
         search_summary = request.GET.get('search_summary', None)
         if search_summary is not None:
             card_list = card_list.filter(summary__contains=search_summary)
+            checkbox_list['search_summary'] = search_summary
+            None_num += 1
 
-        # 이건 해당 언어가 있는글만 출력해야댐
-        # if selected_lang is not None:
-        #     card_list = card_list.filter(summary__contains=)
+        print(card_list,'---')
+
+        temp_list = []
+        C_lang = request.GET.get('C', None)
+        if C_lang is not None:
+            checkbox_list['C'] = 'checked'
+            for card in card_list:
+                for skill in card.skill:
+                    if skill == 'C':
+                        temp_list.append(card.owner)
+
+        print(temp_list)
+        card_list = card_list.filter(owner__in=temp_list)
+
+            # None_num += 1
+
+        # Java_lang = request.GET.get('JAVA', None)
+        # if Java_lang is not None:
+        #     # card_list.filter(skill=Java_lang)
+        #     checkbox_list['JAVA'] = 'checked'
+        #     filter_list.append('JAVA')
+        #     None_num += 1
+        #
+        # Python_lang = request.GET.get('PYTHON', None)
+        # if Python_lang is not None:
+        #     # card_list.filter(skill=Python_lang)
+        #     checkbox_list['PYTHON'] = 'checked'
+        #     filter_list.append('PYTHON')
+        #     None_num += 1
+
+
 
         for card in card_list:
             users = MyUser.objects.get(email=card)
@@ -187,7 +222,7 @@ def main(request):
             stack_form = {'card_form': card_form, 'project_formset': project_formset,
                           'certification_formset': certification_formset}
 
-            arguments = {'profiles': profiles, 'logined': logined, 'has_a_card': has_a_card, 'form': stack_form}
+            arguments = {'profiles': profiles, 'logined': logined, 'has_a_card': has_a_card, 'form': stack_form, 'checkbox_list': checkbox_list}
 
     except Card.DoesNotExist:
         raise Http404("Card does not exist.")
@@ -195,7 +230,12 @@ def main(request):
         profiles = paginator.page(1)
     except EmptyPage:
         profiles = paginator.page(paginator.num_pages)
-        
+
+    if None_num == 4:
+        arguments['profiles'] = None
+        print('Noooooooooooooooooooooooooooooooooon')
+        return render(request, 'web/main.html', arguments)
+
     return render(request, 'web/main.html', arguments)
 
 
