@@ -62,7 +62,7 @@
         <div class="row infinite-container">
             {% for profile in profiles %}
             <div class="col s4 m4 infinite-item">
-                <div class="card horizontal s4">
+                <div class="card large horizontal">
                     <div class="card-stacked">
                         <div class="card-title col offset-s1">
                             <div class="row">
@@ -99,6 +99,13 @@
                         <div class="card-action">
                             <a href="{{ profile.homepage }}">Go to Homepage</a>
                         </div>
+                    </div>
+                    <div class="card-content">
+                        <span class="card-title activator grey-text text-darken-4">Detail<i class="material-icons right">more_vert</i></span>
+                    </div>
+                    <div class="card-reveal">
+                        <span class="card-title grey-text text-darken-4">Project<i class="material-icons right">close</i></span>
+                        <p>Here is some more </p>
                     </div>
                 </div>
 
@@ -332,5 +339,5 @@
             });
         })
     </script>
-  </body>
+
 </html>
