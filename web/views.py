@@ -113,9 +113,24 @@ def main(request):
             email = users.email
             likeNum = len(Like.objects.filter(liked=card))
             homepage = card.homepage
+            summary = card.summary
+            skill = card.skill
+            liked = False
+            if logined:
+                result = Like.objects.filter(liked=card)
+                result = result.filter(user=request.user)
+                if result.count() == 1:
+                    liked = True
+
             certifications = Certification.objects.filter(card=card)[0:2]
-            profile.append({'name': name, 'email': email, 'likeNum': likeNum, 'homepage': homepage})
-            ''''certification1': ('None' if certifications[0] is None else certifications[0]), 'certification2': ('None' if certifications[1] is None else certifications[1])'''
+            profile.append({
+                'name': name,
+                'email': email,
+                'likeNum': likeNum,
+                'homepage': homepage,
+                'summary': summary,
+                'skill': skill,
+                'liked': liked})
 
         page = request.GET.get('page', 1)
         paginator = Paginator(profile, 6)
@@ -181,8 +196,8 @@ def main(request):
                 certification_formset = CertificationFormSet(queryset=Certification.objects.filter(card=card), prefix='crtf')
             else:
                 card_form = CardForm()
-                project_formset = ProjectFormSet(prefix='proj')
-                certification_formset = CertificationFormSet(prefix='crtf')
+                project_formset = ProjectFormSet(queryset=Project.objects.none(), prefix='proj')
+                certification_formset = CertificationFormSet(queryset=Certification.objects.none(), prefix='crtf')
 
             stack_form = {'card_form': card_form, 'project_formset': project_formset,
                           'certification_formset': certification_formset}

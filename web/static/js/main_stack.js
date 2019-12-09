@@ -20,6 +20,15 @@ if(document.getElementById("fab").innerText === "add"){
     for(i=0; i < crtf_num; i++){
         btn_id = "del_crtf_"+i;
 
+        // Select Box Init
+        var select_id = "id_crtf-"+i+"-certificate_type";
+        var opts = [
+            classes = "",
+            dropdownOptions = {}
+        ];
+        var e = document.getElementById(select_id);
+        M.FormSelect.init(e, opts);
+
         document.getElementById(btn_id).addEventListener("click", function (e) {
             var id = this.id.split("_")[2];
             var del_id = "id_crtf-"+id+"-DELETE";
@@ -63,9 +72,10 @@ document.getElementById("add_crtf").addEventListener("click", function () {
         console.log("clicked");
         this.parentElement.remove();
     });
-    var elem = document.querySelectorAll('select');
-    var instance = M.FormSelect.getInstance(elem);
-    addSelectBoxEventListener();
+
+    // Select Box Init
+    var select_id = "id_crtf-"+form_idx+"-certificate_type";
+    addSelectBoxEventListener(select_id);
 });
 
 document.addEventListener('DOMContentLoaded', function() {
@@ -80,21 +90,19 @@ document.addEventListener('DOMContentLoaded', function() {
   ];
 
   var elems = document.querySelectorAll('.modal');
-  var instances = M.Modal.init(elems, options);
-
-  addSelectBoxEventListener();
+  M.Modal.init(elems, options);
 });
 
-function addSelectBoxEventListener()  {
+function addSelectBoxEventListener(id)  {
     var options = [
         classes = "",
         dropdownOptions = {}
     ];
 
-    var elems = document.querySelectorAll('select');
+    var elems = document.getElementById(id);
     M.FormSelect.init(elems, options);
 }
-var opts = [
-    classes = "",
-    dropdownOptions = {}
-];
+
+
+// Card MultiSelectBox init
+addSelectBoxEventListener("id_skill");

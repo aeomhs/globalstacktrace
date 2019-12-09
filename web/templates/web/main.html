@@ -44,22 +44,44 @@
 
     <main role="main" class="container">
         <div class="row infinite-container">
-
             {% for profile in profiles %}
             <div class="col s4 m4 infinite-item">
                 <div class="card horizontal s4">
                     <div class="card-stacked">
-                        <div class="row">
-                            <div class="card-title col s4">{{ profile.name }}<br>{{ profile.email }}</div>
-
-                            <div id="{{ profile.email }}" class="card-content col s4 offset-s4">{{ profile.likeNum }}개</div>
+                        <div class="card-title col offset-s1">
+                            <div class="row">
+                                <h6>{{ profile.email }}</h6>
+                                <span class="right-aligned" style="font-weight: 700">{{ profile.name }}</span><br>
+                                <span style="font-size: 1rem">[</span>
+                                {% for skill in profile.skill %}
+                                    <span style="font-size: 1rem">{{ skill }}</span>,
+                                {% endfor %}
+                                <span style="font-size: 1rem">]</span>
+                            </div>
                         </div>
-                        <a class="like" name="{{ profile.email }}"><i id='like_icon_{{ profile.email }}' class="material-icons">favorite</i></a>
-                        <div class="card-content">
-                            <p>certifications</p>
+                        <div class="card-content col offset-s1">
+                            <div class="row">
+                                <p>
+                                    {{ profile.summary }}
+                                </p>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col offset-s2">
+                                <span id="like_{{ profile.email }}">{{ profile.likeNum }}</span>개
+                            </div>
+                            <div class="col offset-s3">
+                                <a class="like" name="{{ profile.email }}">
+                                    {% if profile.liked %}
+                                        <i id='like_icon_{{ profile.email }}' class="material-icons">favorite</i>
+                                    {% else %}
+                                        <i id='like_icon_{{ profile.email }}' class="material-icons">favorite_border</i>
+                                    {% endif %}
+                                </a>
+                            </div>
                         </div>
                         <div class="card-action">
-                            <a href="{{ profile.homepage }}">This is a link</a>
+                            <a href="{{ profile.homepage }}">Go to Homepage</a>
                         </div>
                     </div>
                 </div>
@@ -278,8 +300,10 @@
 
                 success: function(response){
                     var like_icon = 'like_icon_'+response.email;
-                    var elmt = document.getElementById(response.email)
-                    document.getElementById(response.email).innerHTML = response.likes_count+'개';
+                    var like_id = "like_"+response.email;
+                    {#var elmt = document.getElementById(response.email)#}
+                    {#document.getElementById(response.email).innerHTML = response.likes_count+'개';#}
+                    document.getElementById(like_id).innerText = response.likes_count;
                     if(response.message == 'like_increase'){
                         document.getElementById(like_icon).innerText = 'favorite';
                     }else if(response.message == 'like_decrease'){
