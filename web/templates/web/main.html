@@ -105,7 +105,15 @@
                     </div>
                     <div class="card-reveal">
                         <span class="card-title grey-text text-darken-4">Project<i class="material-icons right">close</i></span>
-                        <p>Here is some more </p>
+                        {% for project in profile.project %}
+                            <h5>{{ project.name }}</h5>
+                            <p><a href="{{ profile.homepage }}">{{ profile.homepage }}</a></p>
+                        {% endfor %}
+                        <span class="card-title grey-text text-darken-4">Certification<i class="material-icons right">close</i></span>
+                        {% for certification in profile.certification %}
+                            <h5>{{ certification.name }}</h5>
+                            <p><a>{{ certification.date }}</a></p>
+                        {% endfor %}
                     </div>
                 </div>
 

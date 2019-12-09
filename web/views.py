@@ -163,6 +163,8 @@ def main(request):
             summary = card.summary
             skill = card.skill
             liked = False
+            project = Project.objects.filter(card=card)
+            certification = Certification.objects.filter(card=card)
             if logined:
                 result = Like.objects.filter(liked=card)
                 result = result.filter(user=request.user)
@@ -176,7 +178,10 @@ def main(request):
                 'homepage': homepage,
                 'summary': summary,
                 'skill': skill,
-                'liked': liked})
+                'liked': liked,
+                'project': project,
+                'certification': certification
+            })
 
         paginator = Paginator(profile, 6)
 
