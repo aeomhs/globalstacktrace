@@ -106,3 +106,12 @@ function addSelectBoxEventListener(id)  {
 
 // Card MultiSelectBox init
 addSelectBoxEventListener("id_skill");
+
+// FAB Event += Card_reveal display none
+document.getElementById("fab").addEventListener('click', function () {
+    var revealed_cards = document.querySelectorAll('.card-reveal');
+    var index = 0, len = revealed_cards.length;
+    for(; index < len; index++){
+        revealed_cards[index].style.display = 'None';
+    }
+})
