@@ -1,3 +1,7 @@
+.container{
+    width: 90%;
+}
+
 .check_margin{
     margin: auto 10px;
 }
@@ -10,4 +14,11 @@
 }
 #search :focus{
     background-color: #01018c21;
+}
+
+/* Fixed Action Button CSS */
+.fixed-fab{
+    position: fixed;
+    bottom: 1rem;
+    right: 5rem;
 }
